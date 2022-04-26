@@ -37,7 +37,6 @@
     "next": "12.1.0",
     "next-urql": "^3.3.2",
     "next-with-apollo": "5.2.1",
-    "nft.storage": "^6.2.0",
     "react": "17.0.2",
     "react-beautiful-dnd": "^13.1.0",
     "react-dom": "17.0.2",
