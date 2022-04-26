@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Banner Snapshot 1`] = `
+<body>
+  <div>
+    <a
+      href="/"
+      rel="noreferrer noopener"
+      target="_blank"
+    >
+      <div
+        class="sc-bdvvtL crITAf"
+      />
+    </a>
+  </div>
+</body>
+`;

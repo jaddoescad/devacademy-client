@@ -1,0 +1,31 @@
+query InstructorCourse($courseId: String!) {
+  course(id: $courseId) {
+    id
+    createdAt
+    updatedAt
+    title
+    description
+    sections {
+      id
+      title
+      courseId
+      createdAt
+      updatedAt
+      lessonOrder
+      lessons {
+        id
+        createdAt
+        updatedAt
+        title
+        sectionId
+        videoUrl
+      }
+    }
+    category
+    promoVideo
+    promoImage
+    instructorId
+    tags
+    sectionOrder
+  }
+}

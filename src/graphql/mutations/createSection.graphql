@@ -1,0 +1,3 @@
+mutation CreateSection($sectionOrder: [String!]!, $courseId: String!, $sectionId: String!, $title: String!) {
+  createSection(sectionOrder: $sectionOrder, courseId: $courseId, sectionId: $sectionId, title: $title)
+}

@@ -1,0 +1,14 @@
+mutation CreateCourse($title: String!) {
+  createCourse(title: $title) {
+    id
+    createdAt
+    updatedAt
+    title
+    description
+    instructorId
+    category
+    promoVideo
+    promoImage
+    tags
+  }
+}

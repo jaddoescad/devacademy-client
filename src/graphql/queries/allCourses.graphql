@@ -1,0 +1,27 @@
+query PaginatedCourses($offset: Int!, $limit: Int!) {
+  courses(offset: $offset, limit: $limit) {
+    courses {
+      id
+      createdAt
+      updatedAt
+      title
+      instructorId
+      description
+      instructor {
+        id
+        firstName
+        lastName
+        instructorTitle
+        description
+        email
+        createdAt
+        updatedAt
+      }
+      category
+      promoVideo
+      promoImage
+      tags
+    }
+    count
+  }
+}

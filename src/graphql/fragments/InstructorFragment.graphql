@@ -1,0 +1,6 @@
+fragment InstructorFragment on Instructor {
+    id
+    email
+    createdAt
+    updatedAt
+}

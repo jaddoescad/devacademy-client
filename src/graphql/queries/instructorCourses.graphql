@@ -1,0 +1,14 @@
+query InstructorCourses {
+  instructorCourses {
+    id
+    createdAt
+    updatedAt
+    title
+    description
+    instructorId
+    category
+    promoVideo
+    promoImage
+    tags
+  }
+}
