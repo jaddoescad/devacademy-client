@@ -101,6 +101,8 @@ const Form = ({
             //   isDisabled
             colorScheme="teal"
             onClick={async () => {
+              console.log("action", action);
+              console.log("type", elementType);")
               if (elementType === "section" && action === "create") {
                 createSectionService(
                   data,

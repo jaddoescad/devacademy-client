@@ -56,6 +56,7 @@ const Section: React.FC<Props> = ({
                 setKeepFocus={setKeepFocusSection}
                 sectionIndex={sectionIndex}
                 elementType="section"
+                action="create"
                 courseData={courseData}
                 courseId={courseId}
               />
