@@ -4,7 +4,7 @@ import { colors } from "@atlaskit/theme";
 import { grid, borderRadius } from "./constants";
 import { Draggable } from "react-beautiful-dnd";
 import LessonList from "./lesson-list";
-import { Box, Button, Flex, Text,IconButton } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, IconButton } from "@chakra-ui/react";
 import PopoverEditForm from "./titleInputForm";
 import {
   useChangeSectionTitleMutation,
@@ -50,9 +50,9 @@ const Section: React.FC<Props> = ({
             height="50px"
             width={"100%"}
           >
-            <Box >
+            <Box>
               <PopoverEditForm
-                {...props}
+                test="here"
                 setKeepFocus={setKeepFocusSection}
                 sectionIndex={sectionIndex}
                 elementType="section"
@@ -79,13 +79,10 @@ const Section: React.FC<Props> = ({
               >
                 <Flex align={"center"}>
                   <Text>{title}</Text>
-                  <Flex flex={1} 
-                              
-                  >
-                    <Flex
-                      flex={1}
-                    >
+                  <Flex flex={1}>
+                    <Flex flex={1}>
                       <PopoverEditForm
+                      test="section"
                         elementType="section"
                         action="edit"
                         sectionId={sectionId}
@@ -101,7 +98,7 @@ const Section: React.FC<Props> = ({
                       />
                     </Flex>
                     <Box>
-                    <PopoverDeleteForm
+                      <PopoverDeleteForm
                         courseId={courseId}
                         actionComponent={<FiMenu />}
                       />
@@ -117,6 +114,7 @@ const Section: React.FC<Props> = ({
                 title={title}
                 isDropDisabled
                 ignoreContainerClipping
+                {...props}
               />
             </Box>
           </Box>

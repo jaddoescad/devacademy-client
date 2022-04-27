@@ -48,13 +48,18 @@ export const createLessonService = async (
   const lessonId = uuidv4();
   var lessonOrder = data?.course?.sections?.find(
     (x) => x.id === sectionId
+
   )?.lessonOrder;
+  console.log(data);
   if (lessonOrder) {
     lessonOrder = [
       ...lessonOrder.slice(0, lessonIndex),
       lessonId,
       ...lessonOrder.slice(lessonIndex, lessonOrder.length),
     ];
+  } else {
+    lessonOrder = [lessonId];
+  }
 
     await createLesson({
       variables: {
@@ -69,7 +74,6 @@ export const createLessonService = async (
         });
       },
     });
-  }
 };
 
 export const changeSectionTitleService = async (

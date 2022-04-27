@@ -77,6 +77,7 @@ const InnerLessonList: React.FC<InnerLessonListProps> = ({
           <PopoverEditForm
             elementType="lesson"
             action="create"
+            courseId={courseId}
             lessonIndex={
               data.course?.sections?.find((x) => x.id === sectionId)
                 ?.lessonOrder.length
@@ -104,7 +105,6 @@ const InnerList: React.FC<InnerListProps> = ({
 }) => {
   return (
     <Box>
-      {title}
       <Box minH={scrollContainerHeight} pb={grid} ref={dropProvided.innerRef}>
         <InnerLessonList {...props} />
         {dropProvided.placeholder}
@@ -151,27 +151,12 @@ const LessonList: React.FC<LessonListProps> = ({
           isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
           {...dropProvided.droppableProps}
         >
-          {internalScroll ? (
-            <Box
-              overflowX="hidden"
-              overflowY="auto"
-              maxHeight={scrollContainerHeight}
-            >
-              <InnerList
-                title={title}
-                dropProvided={dropProvided}
-                sectionId={sectionId}
-                courseId={courseId}
-              />
-            </Box>
-          ) : (
-            <InnerList
-              sectionId={sectionId}
-              courseId={courseId}
-              title={title}
-              dropProvided={dropProvided}
-            />
-          )}
+          <InnerList
+            sectionId={sectionId}
+            courseId={courseId}
+            title={title}
+            dropProvided={dropProvided}
+          />
         </DraggableContainer>
       )}
     </Droppable>

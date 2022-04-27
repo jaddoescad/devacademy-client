@@ -40,7 +40,6 @@ const LessonItem: React.FC<Props> = ({
   lessonIndex,
   sectionId,
   courseId,
-  ...props
 }) => {
   const { data } = useInstructorCourseQuery({
     variables: {
@@ -67,10 +66,12 @@ const LessonItem: React.FC<Props> = ({
       <Box width={"100%"} h="40px">
         <Box>
           <PopoverEditForm
+            action="create"
+            elementType="lesson"
             setKeepFocus={setKeepFocus}
             lessonIndex={lessonIndex}
             sectionId={sectionId}
-            {...props}
+            courseId={courseId}
           />
         </Box>
       </Box>
@@ -97,6 +98,9 @@ const LessonItem: React.FC<Props> = ({
                 <PopoverEditForm
                   elementType="lesson"
                   action="edit"
+                  courseId={courseId}
+                  test="dingdong"
+
                   sectionId={sectionId}
                   setKeepFocus={setKeepFocus}
                   lessonId={lessonId}

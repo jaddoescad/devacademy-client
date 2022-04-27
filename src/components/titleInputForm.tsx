@@ -61,16 +61,13 @@ const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(({...props}
 const Form = ({
   firstFieldRef,
   onCancel,
-  setOrdered,
-  curriculumData,
-  ordered,
   sectionIndex,
   elementType,
   lessonIndex,
   sectionId,
   lessonId,
-  register,
   action,
+  courseId,
   ...props
 }) => {
   const [createSectionMutation] = useCreateSectionMutation();
@@ -81,9 +78,10 @@ const Form = ({
   const { data, error, loading, fetchMore, variables } =
     useInstructorCourseQuery({
       variables: {
-        courseId: props.courseId,
+        courseId: courseId,
       },
     });
+    
 
   return (
     <Box p={4}>
@@ -101,17 +99,17 @@ const Form = ({
             //   isDisabled
             colorScheme="teal"
             onClick={async () => {
-              console.log("action", action);
-              console.log("type", elementType);")
+              console.log("test", props.test)
               if (elementType === "section" && action === "create") {
                 createSectionService(
                   data,
                   sectionIndex,
                   createSectionMutation,
-                  props.courseId,
+                  courseId,
                   firstFieldRef.current.value
                 );
               } else if (elementType === "lesson" && action === "create") {
+                console.log("create lesson");
                 createLessonService(
                   data,
                   lessonIndex,
@@ -149,6 +147,8 @@ const PopoverEditForm = (props) => {
   const firstFieldRef = React.useRef(null);
   const [showAddItem, setShowAddItem] = React.useState(false);
   const [keepFocus, setKeepFocus] = React.useState(false);
+
+  
 
   return (
     <Box height="50px">
