@@ -141,7 +141,7 @@ const LessonList: React.FC<LessonListProps> = ({
       droppableId={sectionId}
       type={listType}
       ignoreContainerClipping={ignoreContainerClipping}
-      isDropDisabled={isDropDisabled}
+      isDropDisabled={false}
       isCombineEnabled={false}
     >
       {(dropProvided, dropSnapshot) => (
