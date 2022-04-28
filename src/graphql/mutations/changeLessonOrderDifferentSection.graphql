@@ -28,9 +28,6 @@ mutation ChangeLessonOrderDifferentSection(
       id
       sectionId
       title
-      section {
-        id
-      }
     }
   }
 }

@@ -13,6 +13,8 @@ import { FiEdit2, FiTrash, FiTrash2, FiMenu } from "react-icons/fi";
 import PopoverDeleteForm from "./deleteForm";
 import MyDropzone from "./dropzone";
 import ReactPlayer from "react-player";
+import VideoLessonCreationItem from "./video-lesson-creation-item";
+import { useRouter } from "next/router";
 
 // Previously this extended React.Component
 // That was a good thing, because using React.PureComponent can hide
@@ -56,6 +58,7 @@ const LessonItem: React.FC<Props> = ({
   const [showExtension, setShowExtension] = React.useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [setVideoUrlMutation] = useSetVideoUrlMutation();
+  const router = useRouter();
 
   const lesson = data?.course?.sections
     ?.find((x) => x.id === sectionId)
@@ -99,8 +102,6 @@ const LessonItem: React.FC<Props> = ({
                   elementType="lesson"
                   action="edit"
                   courseId={courseId}
-                  test="dingdong"
-
                   sectionId={sectionId}
                   setKeepFocus={setKeepFocus}
                   lessonId={lessonId}
@@ -114,7 +115,7 @@ const LessonItem: React.FC<Props> = ({
                   actionComponent={<FiTrash />}
                 />
               </Flex>
-              {!lesson?.videoUrl && (
+              {!lesson?.videoEmbedUrl && (
                 <Button
                   onClick={() => {
                     if (showExtension === true) {
@@ -138,7 +139,7 @@ const LessonItem: React.FC<Props> = ({
               </Box>
             </Flex>
           }
-          {!lesson?.videoUrl || lesson?.videoUrl === "" ? (
+          {!lesson?.videoEmbedUrl || lesson?.videoEmbedUrl === "" ? (
             <>
               {showExtension && (
                 <>
@@ -179,39 +180,23 @@ const LessonItem: React.FC<Props> = ({
           ) : (
             <>
               {/* <ReactPlayer controls={true} url={lesson.videoUrl} /> */}
-              {/* <iframe
-                src={lesson.videoUrl+"&amp;title=0&amp;byline=0&amp;portrait=0&amp;speed=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=243900"}
-                width="400"
-                height="300"
-                frameborder="0"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowfullscreen
-                title="Untitled"
-              ></iframe> */}
-              <iframe
-                src="https://player.vimeo.com/video/702688891?h=71abbc418c&amp;title=0&amp;byline=0&amp;portrait=0&amp;speed=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=243900"
-                width="400"
-                height="300"
-                frameBorder="0"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-                title="Untitled"
-              ></iframe>
-              {console.log(lesson.videoUrl)}
+              <VideoLessonCreationItem lessonVideoUrl={lesson?.videoEmbedUrl} />
               <Button
                 onClick={() => {
                   // setVideoUrl(lesson.videoUrl);
                   setVideoUrlMutation({
                     variables: {
                       lessonId: lessonId,
-                      videoUrl: "",
+                      videoEmbedUrl: "",
+                      videoUri: "",
                     },
                     optimisticResponse: {
                       __typename: "Mutation",
                       setVideoUrl: {
                         __typename: "Lesson",
                         id: lessonId,
-                        videoUrl: "",
+                        videoEmbedUrl: "",
+                        videoUri: "",
                       },
                     },
                     update: (cache) => {
@@ -221,6 +206,22 @@ const LessonItem: React.FC<Props> = ({
                 }}
               >
                 delete
+              </Button>
+              <Button
+                onClick={() => {
+                  router.push(
+                    {
+                      pathname: "/lesson-video-preview",
+                      query: {
+                        lessonVideoUrl: lesson?.videoEmbedUrl,
+                      },
+                    },
+                    "/lesson-video-preview",
+                    { shallow: true }
+                  );
+                }}
+              >
+                Preview
               </Button>
             </>
           )}

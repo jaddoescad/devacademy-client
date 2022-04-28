@@ -18,7 +18,8 @@ query InstructorCourse($courseId: String!) {
         updatedAt
         title
         sectionId
-        videoUrl
+        videoUri
+        videoEmbedUrl
       }
     }
     category

@@ -1,9 +1,16 @@
 import { Box } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
+import {checkTranscode} from "src/services/checkTranscode";
 
 interface testVideoProps {}
 
 export const testVideo: React.FC<testVideoProps> = ({}) => {
+
+    useEffect(() => {
+        console.log("checking")
+        checkTranscode()
+    }, [])
+
   return (
     <Box>
       <iframe

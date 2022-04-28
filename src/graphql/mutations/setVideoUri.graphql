@@ -1,0 +1,7 @@
+mutation SetVideoUrl($videoUri: String!, $videoEmbedUrl: String!, $lessonId: String!) {
+  setVideoUrl(videoUri: $videoUri, videoEmbedUrl: $videoEmbedUrl, lessonId: $lessonId) {
+    videoEmbedUrl
+    videoUri
+    id
+  }
+}

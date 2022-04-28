@@ -24,7 +24,7 @@ const headerPost = {
   "Content-Type": "application/json",
 };
 
-export const uploadVideo = async (file, setProgress, setFinished, setVideoUrl) => {
+export const uploadVideo = async (file, setProgress, setFinished, setVideoData) => {
     // Get the selected file from the input element
     // const file = eventObject.target.files[0];
     const fileName = file.name;
@@ -41,7 +41,7 @@ export const uploadVideo = async (file, setProgress, setFinished, setVideoUrl) =
           size: fileSize,
         },
         privacy: {
-          view: "nobody",
+          view: "disable",
           download: "false",
           embed: "whitelist",
         },
@@ -74,7 +74,8 @@ export const uploadVideo = async (file, setProgress, setFinished, setVideoUrl) =
         console.log("Download %s from %s", upload.file.name, upload.url);
         setFinished(true);
         // setVideoUrl(response.data.player_embed_url);
-        setVideoUrl(response.data.player_embed_url);
+        setVideoData({videoEmbedUrl: response.data.player_embed_url, videoURI: response.data.uri});
+        
       },
     });
 

@@ -64,8 +64,9 @@ export type Lesson = {
   sectionId: Scalars['String'];
   title: Scalars['String'];
   updatedAt: Scalars['String'];
+  videoEmbedUrl?: Maybe<Scalars['String']>;
   videoState?: Maybe<Scalars['String']>;
-  videoUrl?: Maybe<Scalars['String']>;
+  videoUri?: Maybe<Scalars['String']>;
 };
 
 export type LoginInput = {
@@ -189,7 +190,8 @@ export type MutationRegisterArgs = {
 
 export type MutationSetVideoUrlArgs = {
   lessonId: Scalars['String'];
-  videoUrl: Scalars['String'];
+  videoEmbedUrl: Scalars['String'];
+  videoUri: Scalars['String'];
 };
 
 
@@ -267,7 +269,7 @@ export type ChangeLessonOrderDifferentSectionMutationVariables = Exact<{
 }>;
 
 
-export type ChangeLessonOrderDifferentSectionMutation = { __typename?: 'Mutation', changeLessonOrderDifferentSection: { __typename?: 'OrderedLessonsInMultipleSections', nextSection: { __typename?: 'Section', id: string, lessonOrder: Array<string>, lessons?: Array<{ __typename?: 'Lesson', id: string, title: string }> | null }, currentSection: { __typename?: 'Section', id: string, lessonOrder: Array<string> }, currentLesson: { __typename?: 'Lesson', id: string, sectionId: string, title: string, section?: { __typename?: 'Section', id: string } | null } } };
+export type ChangeLessonOrderDifferentSectionMutation = { __typename?: 'Mutation', changeLessonOrderDifferentSection: { __typename?: 'OrderedLessonsInMultipleSections', nextSection: { __typename?: 'Section', id: string, lessonOrder: Array<string>, lessons?: Array<{ __typename?: 'Lesson', id: string, title: string }> | null }, currentSection: { __typename?: 'Section', id: string, lessonOrder: Array<string> }, currentLesson: { __typename?: 'Lesson', id: string, sectionId: string, title: string } } };
 
 export type ChangeLessonOrderSameSectionMutationVariables = Exact<{
   lessonOrder: Array<Scalars['String']> | Scalars['String'];
@@ -378,12 +380,13 @@ export type RegisterMutationVariables = Exact<{
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'InstructorResponse', instructor?: { __typename?: 'Instructor', email: string, createdAt: string, updatedAt: string, id: string, firstName: string, lastName: string, instructorTitle?: string | null, description?: string | null } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type SetVideoUrlMutationVariables = Exact<{
-  videoUrl: Scalars['String'];
+  videoUri: Scalars['String'];
+  videoEmbedUrl: Scalars['String'];
   lessonId: Scalars['String'];
 }>;
 
 
-export type SetVideoUrlMutation = { __typename?: 'Mutation', setVideoUrl: { __typename?: 'Lesson', id: string, videoUrl?: string | null } };
+export type SetVideoUrlMutation = { __typename?: 'Mutation', setVideoUrl: { __typename?: 'Lesson', videoEmbedUrl?: string | null, videoUri?: string | null, id: string } };
 
 export type PaginatedCoursesQueryVariables = Exact<{
   offset: Scalars['Int'];
@@ -398,7 +401,7 @@ export type InstructorCourseQueryVariables = Exact<{
 }>;
 
 
-export type InstructorCourseQuery = { __typename?: 'Query', course?: { __typename?: 'Course', id: string, createdAt: string, updatedAt: string, title: string, description?: string | null, category?: string | null, promoVideo?: string | null, promoImage?: string | null, instructorId: string, tags: Array<string>, sectionOrder: Array<string>, sections?: Array<{ __typename?: 'Section', id: string, title: string, courseId: string, createdAt: string, updatedAt: string, lessonOrder: Array<string>, lessons?: Array<{ __typename?: 'Lesson', id: string, createdAt: string, updatedAt: string, title: string, sectionId: string, videoUrl?: string | null }> | null }> | null } | null };
+export type InstructorCourseQuery = { __typename?: 'Query', course?: { __typename?: 'Course', id: string, createdAt: string, updatedAt: string, title: string, description?: string | null, category?: string | null, promoVideo?: string | null, promoImage?: string | null, instructorId: string, tags: Array<string>, sectionOrder: Array<string>, sections?: Array<{ __typename?: 'Section', id: string, title: string, courseId: string, createdAt: string, updatedAt: string, lessonOrder: Array<string>, lessons?: Array<{ __typename?: 'Lesson', id: string, createdAt: string, updatedAt: string, title: string, sectionId: string, videoUri?: string | null, videoEmbedUrl?: string | null }> | null }> | null } | null };
 
 export type InstructorCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -443,9 +446,6 @@ export const ChangeLessonOrderDifferentSectionDocument = gql`
       id
       sectionId
       title
-      section {
-        id
-      }
     }
   }
 }
@@ -1002,10 +1002,15 @@ export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const SetVideoUrlDocument = gql`
-    mutation SetVideoUrl($videoUrl: String!, $lessonId: String!) {
-  setVideoUrl(videoUrl: $videoUrl, lessonId: $lessonId) {
+    mutation SetVideoUrl($videoUri: String!, $videoEmbedUrl: String!, $lessonId: String!) {
+  setVideoUrl(
+    videoUri: $videoUri
+    videoEmbedUrl: $videoEmbedUrl
+    lessonId: $lessonId
+  ) {
+    videoEmbedUrl
+    videoUri
     id
-    videoUrl
   }
 }
     `;
@@ -1024,7 +1029,8 @@ export type SetVideoUrlMutationFn = Apollo.MutationFunction<SetVideoUrlMutation,
  * @example
  * const [setVideoUrlMutation, { data, loading, error }] = useSetVideoUrlMutation({
  *   variables: {
- *      videoUrl: // value for 'videoUrl'
+ *      videoUri: // value for 'videoUri'
+ *      videoEmbedUrl: // value for 'videoEmbedUrl'
  *      lessonId: // value for 'lessonId'
  *   },
  * });
@@ -1115,7 +1121,8 @@ export const InstructorCourseDocument = gql`
         updatedAt
         title
         sectionId
-        videoUrl
+        videoUri
+        videoEmbedUrl
       }
     }
     category

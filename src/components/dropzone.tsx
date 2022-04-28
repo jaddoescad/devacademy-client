@@ -12,26 +12,29 @@ const MyDropzone: React.FC<Props> = ({ lessonId }) => {
   const [title, setTitle] = React.useState("");
   const [progress, setProgress] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [videoUrl, setVideoUrl] = useState("");
+
+  const [videoData, setVideoData] = useState({
+    videoEmbedUrl: "",
+    videoURI: "",
+  });
+
   const [setVideoUrlMutation] = useSetVideoUrlMutation();
 
   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.forEach((file: File) => {
-      console.log("uplaoding");
       const reader = new FileReader();
 
       reader.onabort = () => console.log("file reading was aborted");
       reader.onerror = () => console.log("file reading has failed");
       reader.onload = () => {
         // Do whatever you want with the file contents
-        console.log("uploading");
         setTitle(file.name);
         const binaryStr = reader.result;
         console.log(binaryStr);
       };
       reader.readAsArrayBuffer(file);
       // upload here and return link
-      uploadVideo(file, setProgress, setFinished, setVideoUrl);
+      uploadVideo(file, setProgress, setFinished, setVideoData);
     });
   }, []);
 
@@ -40,19 +43,27 @@ const MyDropzone: React.FC<Props> = ({ lessonId }) => {
     multiple: false,
     accept: "video/mp4,video/x-m4v,video/*",
   });
+
   useEffect(() => {
-    if (videoUrl !== "") {
+    if (
+      videoData.videoEmbedUrl !== "" &&
+      videoData.videoURI !== "" &&
+      videoData.videoEmbedUrl &&
+      videoData.videoURI
+    ) {
       setVideoUrlMutation({
         variables: {
           lessonId: lessonId,
-          videoUrl,
+          videoEmbedUrl: videoData.videoEmbedUrl,
+          videoUri: videoData.videoURI,
         },
         optimisticResponse: {
           __typename: "Mutation",
           setVideoUrl: {
             __typename: "Lesson",
             id: lessonId,
-            videoUrl,
+            videoEmbedUrl: videoData.videoEmbedUrl,
+            videoUri: videoData.videoURI,
           },
         },
         update: (cache) => {
@@ -60,7 +71,7 @@ const MyDropzone: React.FC<Props> = ({ lessonId }) => {
         },
       });
     }
-  }, [videoUrl]);
+  }, [videoData]);
   return (
     <div
       style={{
