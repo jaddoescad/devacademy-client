@@ -116,7 +116,7 @@ const LessonItem: React.FC<Props> = ({
                   actionComponent={<FiTrash />}
                 />
               </Flex>
-              {!lesson?.videoEmbedUrl && (
+              {!lesson?.videoEmbedUrl && !lesson?.isArticle && (
                 <Button
                   onClick={() => {
                     if (showExtension === true) {
@@ -130,7 +130,7 @@ const LessonItem: React.FC<Props> = ({
                     }
                   }}
                 >
-                  {videoOrArticle || uploadVideo || createArticle
+                  {videoOrArticle || uploadVideo || createArticle 
                     ? "Cancel"
                     : "Add Content"}
                 </Button>
@@ -142,8 +142,6 @@ const LessonItem: React.FC<Props> = ({
           }
           {lesson?.videoEmbedUrl && lesson?.videoEmbedUrl !== "" ? (
            <>
-           {/* <ReactPlayer controls={true} url={lesson.videoUrl} /> */}
-           <VideoLessonCreationItem lessonVideoUrl={lesson?.videoEmbedUrl} />
            <Button
              onClick={() => {
                // setVideoUrl(lesson.videoUrl);
@@ -184,7 +182,7 @@ const LessonItem: React.FC<Props> = ({
                );
              }}
            >
-             Preview
+             Preview Video
            </Button>
          </>
           ) : (lesson?.isArticle) ? (

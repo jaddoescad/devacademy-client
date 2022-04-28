@@ -16,17 +16,9 @@ export const ArticleSubHeader: React.FC<ArticleSubHeaderProps> = ({
     <Box>
       <Button
         onClick={() => {
-          router.push(
-            {
-              pathname: "/article-editor",
-              query: {
-                lessonId: lessonId,
-                courseId: courseId,
-              },
-            },
-            "/article-editor",
-            { shallow: true }
-          );
+          router.push({
+            pathname: `/course-creation-platform/${courseId}/${lessonId}/article-editor`,
+          });
         }}
       >
         Preview Article
