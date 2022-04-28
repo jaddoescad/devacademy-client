@@ -160,7 +160,14 @@ const LessonItem: React.FC<Props> = ({
                           onClick={() => {
                             setUploadVideo(false);
                             setVideoOrArticle(false);
-                            setCreateArticle(true);
+                            // setCreateArticle(true);
+
+                            // create article
+                            router.push(
+                              {
+                                pathname: `/course-creation-platform/${courseId}/${lessonId}/article-editor`
+                              }                
+                            );
                           }}
                         >
                           Article

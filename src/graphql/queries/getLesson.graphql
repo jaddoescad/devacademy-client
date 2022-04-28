@@ -1,0 +1,6 @@
+query GetLesson($lessonId: String!) {
+  lesson(id: $lessonId) {
+    id
+    articleText
+  }
+}

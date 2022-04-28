@@ -1,0 +1,6 @@
+mutation SetArticleText($articleText: String!, $lessonId: String!) {
+  setArticleText(articleText: $articleText, lessonId: $lessonId) {
+    id
+    articleText
+  }
+}
