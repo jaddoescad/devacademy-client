@@ -15,6 +15,7 @@ import MyDropzone from "./dropzone";
 import ReactPlayer from "react-player";
 import VideoLessonCreationItem from "./video-lesson-creation-item";
 import { useRouter } from "next/router";
+import {ArticleSubHeader} from "./article-subheader";
 
 // Previously this extended React.Component
 // That was a good thing, because using React.PureComponent can hide
@@ -139,7 +140,56 @@ const LessonItem: React.FC<Props> = ({
               </Box>
             </Flex>
           }
-          {!lesson?.videoEmbedUrl || lesson?.videoEmbedUrl === "" ? (
+          {lesson?.videoEmbedUrl && lesson?.videoEmbedUrl !== "" ? (
+           <>
+           {/* <ReactPlayer controls={true} url={lesson.videoUrl} /> */}
+           <VideoLessonCreationItem lessonVideoUrl={lesson?.videoEmbedUrl} />
+           <Button
+             onClick={() => {
+               // setVideoUrl(lesson.videoUrl);
+               setVideoUrlMutation({
+                 variables: {
+                   lessonId: lessonId,
+                   videoEmbedUrl: "",
+                   videoUri: "",
+                 },
+                 optimisticResponse: {
+                   __typename: "Mutation",
+                   setVideoUrl: {
+                     __typename: "Lesson",
+                     id: lessonId,
+                     videoEmbedUrl: "",
+                     videoUri: "",
+                   },
+                 },
+                 update: (cache) => {
+                   cache.evict({ fieldName: "course" });
+                 },
+               });
+             }}
+           >
+             delete
+           </Button>
+           <Button
+             onClick={() => {
+               router.push(
+                 {
+                   pathname: "/lesson-video-preview",
+                   query: {
+                     lessonVideoUrl: lesson?.videoEmbedUrl,
+                   },
+                 },
+                 "/lesson-video-preview",
+                 { shallow: true }
+               );
+             }}
+           >
+             Preview
+           </Button>
+         </>
+          ) : (lesson?.isArticle) ? (
+            <ArticleSubHeader courseId={courseId} lessonId={lessonId}/>
+          ) : (
             <>
               {showExtension && (
                 <>
@@ -163,11 +213,9 @@ const LessonItem: React.FC<Props> = ({
                             // setCreateArticle(true);
 
                             // create article
-                            router.push(
-                              {
-                                pathname: `/course-creation-platform/${courseId}/${lessonId}/article-editor`
-                              }                
-                            );
+                            router.push({
+                              pathname: `/course-creation-platform/${courseId}/${lessonId}/article-editor`,
+                            });
                           }}
                         >
                           Article
@@ -183,53 +231,6 @@ const LessonItem: React.FC<Props> = ({
                   {createArticle && <Box>Create Article</Box>}
                 </>
               )}
-            </>
-          ) : (
-            <>
-              {/* <ReactPlayer controls={true} url={lesson.videoUrl} /> */}
-              <VideoLessonCreationItem lessonVideoUrl={lesson?.videoEmbedUrl} />
-              <Button
-                onClick={() => {
-                  // setVideoUrl(lesson.videoUrl);
-                  setVideoUrlMutation({
-                    variables: {
-                      lessonId: lessonId,
-                      videoEmbedUrl: "",
-                      videoUri: "",
-                    },
-                    optimisticResponse: {
-                      __typename: "Mutation",
-                      setVideoUrl: {
-                        __typename: "Lesson",
-                        id: lessonId,
-                        videoEmbedUrl: "",
-                        videoUri: "",
-                      },
-                    },
-                    update: (cache) => {
-                      cache.evict({ fieldName: "course" });
-                    },
-                  });
-                }}
-              >
-                delete
-              </Button>
-              <Button
-                onClick={() => {
-                  router.push(
-                    {
-                      pathname: "/lesson-video-preview",
-                      query: {
-                        lessonVideoUrl: lesson?.videoEmbedUrl,
-                      },
-                    },
-                    "/lesson-video-preview",
-                    { shallow: true }
-                  );
-                }}
-              >
-                Preview
-              </Button>
             </>
           )}
         </Box>

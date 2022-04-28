@@ -61,6 +61,7 @@ export type Lesson = {
   articleText?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
   id: Scalars['String'];
+  isArticle?: Maybe<Scalars['Boolean']>;
   section?: Maybe<Section>;
   sectionId: Scalars['String'];
   title: Scalars['String'];
@@ -430,7 +431,7 @@ export type InstructorCourseQueryVariables = Exact<{
 }>;
 
 
-export type InstructorCourseQuery = { __typename?: 'Query', course?: { __typename?: 'Course', id: string, createdAt: string, updatedAt: string, title: string, description?: string | null, category?: string | null, promoVideo?: string | null, promoImage?: string | null, instructorId: string, tags: Array<string>, sectionOrder: Array<string>, sections?: Array<{ __typename?: 'Section', id: string, title: string, courseId: string, createdAt: string, updatedAt: string, lessonOrder: Array<string>, lessons?: Array<{ __typename?: 'Lesson', id: string, createdAt: string, updatedAt: string, title: string, sectionId: string, videoUri?: string | null, videoEmbedUrl?: string | null }> | null }> | null } | null };
+export type InstructorCourseQuery = { __typename?: 'Query', course?: { __typename?: 'Course', id: string, createdAt: string, updatedAt: string, title: string, description?: string | null, category?: string | null, promoVideo?: string | null, promoImage?: string | null, instructorId: string, tags: Array<string>, sectionOrder: Array<string>, sections?: Array<{ __typename?: 'Section', id: string, title: string, courseId: string, createdAt: string, updatedAt: string, lessonOrder: Array<string>, lessons?: Array<{ __typename?: 'Lesson', id: string, createdAt: string, updatedAt: string, title: string, sectionId: string, videoUri?: string | null, videoEmbedUrl?: string | null, isArticle?: boolean | null }> | null }> | null } | null };
 
 export type InstructorCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1223,6 +1224,7 @@ export const InstructorCourseDocument = gql`
         sectionId
         videoUri
         videoEmbedUrl
+        isArticle
       }
     }
     category
