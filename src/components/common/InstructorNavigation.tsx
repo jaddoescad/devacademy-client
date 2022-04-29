@@ -1,20 +1,17 @@
 import React, { ReactComponentElement, useEffect } from "react";
 import {
   Box,
-  Link,
   Flex,
   Button,
   Avatar,
   Menu,
   MenuButton,
   MenuList,
-  MenuGroup,
   MenuItem,
-  MenuDivider,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useLogoutMutation, useMeQuery } from "src/generated/graphql";
-import { isServer } from "src/utils/isServer";
+// import { isServer } from "src/utils/isServer";
 import { useApolloClient } from "@apollo/client";
 
 interface InstructorNavigationProps {}
@@ -36,41 +33,34 @@ export const InstructorNavigation: React.FC<
     // user not logged in
     body = (
       <Box>
-        <NextLink href="/login">
-          <Link mr={2}>login</Link>
-        </NextLink>
-        <NextLink href="/register">
-          <Link>register</Link>
-        </NextLink>
+        <Box mr={2}>
+          <NextLink href="/login">login</NextLink>
+        </Box>
+        <NextLink href="/register">register</NextLink>
       </Box>
     );
   } else if (!data?.me) {
     body = (
       <Box>
         <Flex>
-          <NextLink href="/login">
-            <Link mr={2}>login</Link>
-          </NextLink>
-          <NextLink href="/register">
-            <Link>register</Link>
-          </NextLink>
+          <Box mr={2}>
+            <NextLink href="/login">login</NextLink>
+          </Box>
+          <NextLink href="/register">register</NextLink>
         </Flex>
       </Box>
     );
     // user is logged in
   } else {
     body = (
-      <Box >
+      <Box>
         <Flex alignItems="center">
           <Box fontWeight={"medium"} mr={"4"} ml={"2"}>
-            <NextLink href="/catalog">
-              <Link>Student</Link>
-            </NextLink>
+            <NextLink href="/catalog">Student</NextLink>
           </Box>
-          <Menu >
+          <Menu>
             <MenuButton>
               <Avatar
-                as={Button}
                 name={data.me.firstName + " " + data.me.lastName}
               />
             </MenuButton>

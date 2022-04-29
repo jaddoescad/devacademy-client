@@ -32,13 +32,13 @@ interface Props {
   lessonIndex: number;
   provided: any;
   isGroupedOver: boolean;
-  isDragging: boolean;
+  isdragging: boolean;
   lessonId: string;
 }
 
 const LessonItem: React.FC<Props> = ({
   lessonId,
-  isDragging,
+  isdragging,
   isGroupedOver,
   provided,
   lessonIndex,
@@ -103,8 +103,6 @@ const LessonItem: React.FC<Props> = ({
         </Box>
       </Box>
       <Box
-        isDragging={isDragging}
-        isGroupedOver={isGroupedOver}
         ref={provided.innerRef}
         {...provided.draggableProps}
         {...provided.dragHandleProps}
