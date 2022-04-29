@@ -18,10 +18,11 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({}) => {
 
   const { data, error, loading, fetchMore, variables } = useGetLessonQuery({
     variables: {
-      lessonId: typeof router.query.lessonid  === "string" ? router.query.lessonid : ""
+      lessonId:
+        typeof router.query.lessonid === "string" ? router.query.lessonid : "",
     },
   });
-  
+
   useEffect(() => {
     if (data && data.lesson && data.lesson.articleText) {
       setValue(data.lesson.articleText);
@@ -43,6 +44,9 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({}) => {
         lessonId: articleid,
         articleText: value,
       },
+      update: (cache) => {
+        cache.evict({ fieldName: "course" });
+      }
     })
       .then(() => {
         setEditorChange("saved");

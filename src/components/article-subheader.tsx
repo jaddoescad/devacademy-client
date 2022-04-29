@@ -1,6 +1,7 @@
 import { Button, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React from "react";
+import {useDeleteArticleMutation} from "src/generated/graphql";
 
 interface ArticleSubHeaderProps {
   lessonId: string;
@@ -12,6 +13,7 @@ export const ArticleSubHeader: React.FC<ArticleSubHeaderProps> = ({
   courseId,
 }) => {
   const router = useRouter();
+  const [deleteArticle] = useDeleteArticleMutation();
   return (
     <Box>
       <Button
@@ -22,6 +24,20 @@ export const ArticleSubHeader: React.FC<ArticleSubHeaderProps> = ({
         }}
       >
         Preview Article
+      </Button>
+      <Button
+        onClick={() => {
+          deleteArticle({
+            variables: {
+              lessonId,
+            },
+            update: (cache) => {
+              cache.evict({ fieldName: "course" });
+            },
+          })
+        }}
+      >
+        Delete Article
       </Button>
     </Box>
   );

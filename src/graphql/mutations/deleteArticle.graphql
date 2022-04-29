@@ -1,0 +1,7 @@
+mutation DeleteArticle($lessonId: String!) {
+  deleteArticle(lessonId: $lessonId) {
+    id
+    isArticle
+    articleText
+  }
+}

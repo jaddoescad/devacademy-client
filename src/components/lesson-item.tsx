@@ -15,7 +15,8 @@ import MyDropzone from "./dropzone";
 import ReactPlayer from "react-player";
 import VideoLessonCreationItem from "./video-lesson-creation-item";
 import { useRouter } from "next/router";
-import {ArticleSubHeader} from "./article-subheader";
+import { ArticleSubHeader } from "./article-subheader";
+import { deleteVideo } from "src/services/deleteVideo";
 
 // Previously this extended React.Component
 // That was a good thing, because using React.PureComponent can hide
@@ -64,6 +65,28 @@ const LessonItem: React.FC<Props> = ({
   const lesson = data?.course?.sections
     ?.find((x) => x.id === sectionId)
     ?.lessons?.find((x) => x.id === lessonId);
+
+    function deleteVideoPgsql() {
+      setVideoUrlMutation({
+        variables: {
+          lessonId: lessonId,
+          videoEmbedUrl: "",
+          videoUri: "",
+        },
+        optimisticResponse: {
+          __typename: "Mutation",
+          setVideoUrl: {
+            __typename: "Lesson",
+            id: lessonId,
+            videoEmbedUrl: "",
+            videoUri: "",
+          },
+        },
+        update: (cache) => {
+          cache.evict({ fieldName: "course" });
+        },
+      });
+    }
 
   return (
     <Box>
@@ -130,7 +153,7 @@ const LessonItem: React.FC<Props> = ({
                     }
                   }}
                 >
-                  {videoOrArticle || uploadVideo || createArticle 
+                  {videoOrArticle || uploadVideo || createArticle
                     ? "Cancel"
                     : "Add Content"}
                 </Button>
@@ -141,52 +164,39 @@ const LessonItem: React.FC<Props> = ({
             </Flex>
           }
           {lesson?.videoEmbedUrl && lesson?.videoEmbedUrl !== "" ? (
-           <>
-           <Button
-             onClick={() => {
-               // setVideoUrl(lesson.videoUrl);
-               setVideoUrlMutation({
-                 variables: {
-                   lessonId: lessonId,
-                   videoEmbedUrl: "",
-                   videoUri: "",
-                 },
-                 optimisticResponse: {
-                   __typename: "Mutation",
-                   setVideoUrl: {
-                     __typename: "Lesson",
-                     id: lessonId,
-                     videoEmbedUrl: "",
-                     videoUri: "",
-                   },
-                 },
-                 update: (cache) => {
-                   cache.evict({ fieldName: "course" });
-                 },
-               });
-             }}
-           >
-             delete
-           </Button>
-           <Button
-             onClick={() => {
-               router.push(
-                 {
-                   pathname: "/lesson-video-preview",
-                   query: {
-                     lessonVideoUrl: lesson?.videoEmbedUrl,
-                   },
-                 },
-                 "/lesson-video-preview",
-                 { shallow: true }
-               );
-             }}
-           >
-             Preview Video
-           </Button>
-         </>
-          ) : (lesson?.isArticle) ? (
-            <ArticleSubHeader courseId={courseId} lessonId={lessonId}/>
+            <>
+              <Button
+                onClick={async () => {
+                  try {
+                    await deleteVideo(lesson.videoUri);
+                    deleteVideoPgsql();
+                  } catch (error) {
+                    deleteVideoPgsql();
+                  }
+                  // setVideoUrl(lesson.videoUrl);
+                }}
+              >
+                delete
+              </Button>
+              <Button
+                onClick={() => {
+                  router.push(
+                    {
+                      pathname: "/lesson-video-preview",
+                      query: {
+                        lessonVideoUrl: lesson?.videoEmbedUrl,
+                      },
+                    },
+                    "/lesson-video-preview",
+                    { shallow: true }
+                  );
+                }}
+              >
+                Preview Video
+              </Button>
+            </>
+          ) : lesson?.isArticle ? (
+            <ArticleSubHeader courseId={courseId} lessonId={lessonId} />
           ) : (
             <>
               {showExtension && (
