@@ -17,6 +17,7 @@ import VideoLessonCreationItem from "./video-lesson-creation-item";
 import { useRouter } from "next/router";
 import { ArticleSubHeader } from "./article-subheader";
 import { deleteVideo } from "src/services/deleteVideo";
+import HoverToShowWrapper from "./HoverToShowWrapper";
 
 // Previously this extended React.Component
 // That was a good thing, because using React.PureComponent can hide
@@ -32,13 +33,12 @@ interface Props {
   lessonIndex: number;
   provided: any;
   isGroupedOver: boolean;
-  isdragging: boolean;
+
   lessonId: string;
 }
 
 const LessonItem: React.FC<Props> = ({
   lessonId,
-  isdragging,
   isGroupedOver,
   provided,
   lessonIndex,
@@ -53,7 +53,6 @@ const LessonItem: React.FC<Props> = ({
 
   const [showAddLessonItem, setShowLessonItem] = React.useState(false);
   const [showHeaderItem, setShowHeaderItem] = React.useState(false);
-  const [keepFocus, setKeepFocus] = React.useState(false);
   const [uploadVideo, setUploadVideo] = React.useState(false);
   const [createArticle, setCreateArticle] = React.useState(false);
   const [videoOrArticle, setVideoOrArticle] = React.useState(false);
@@ -66,40 +65,41 @@ const LessonItem: React.FC<Props> = ({
     ?.find((x) => x.id === sectionId)
     ?.lessons?.find((x) => x.id === lessonId);
 
-    function deleteVideoPgsql() {
-      setVideoUrlMutation({
-        variables: {
-          lessonId: lessonId,
+  function deleteVideoPgsql() {
+    setVideoUrlMutation({
+      variables: {
+        lessonId: lessonId,
+        videoEmbedUrl: "",
+        videoUri: "",
+      },
+      optimisticResponse: {
+        __typename: "Mutation",
+        setVideoUrl: {
+          __typename: "Lesson",
+          id: lessonId,
           videoEmbedUrl: "",
           videoUri: "",
         },
-        optimisticResponse: {
-          __typename: "Mutation",
-          setVideoUrl: {
-            __typename: "Lesson",
-            id: lessonId,
-            videoEmbedUrl: "",
-            videoUri: "",
-          },
-        },
-        update: (cache) => {
-          cache.evict({ fieldName: "course" });
-        },
-      });
-    }
+      },
+      update: (cache) => {
+        cache.evict({ fieldName: "course" });
+      },
+    });
+  }
 
   return (
     <Box>
       <Box width={"100%"} h="40px">
         <Box>
-          <PopoverEditForm
-            action="create"
-            elementType="lesson"
-            setKeepFocus={setKeepFocus}
-            lessonIndex={lessonIndex}
-            sectionId={sectionId}
-            courseId={courseId}
-          />
+          <HoverToShowWrapper>
+            <PopoverEditForm
+              action="create"
+              elementType="lesson"
+              lessonIndex={lessonIndex}
+              sectionId={sectionId}
+              courseId={courseId}
+            />
+          </HoverToShowWrapper>
         </Box>
       </Box>
       <Box
@@ -117,26 +117,27 @@ const LessonItem: React.FC<Props> = ({
           {
             <Flex align={"center"}>
               <Text>{lesson?.title}</Text>
-              <Flex flex={1}>
-                {/* <Icon ml="2" w={3.5} h={3.5} as={FiEdit2} /> */}
+              <HoverToShowWrapper>
+                <Flex flex={1}>
+                  {/* <Icon ml="2" w={3.5} h={3.5} as={FiEdit2} /> */}
 
-                <PopoverEditForm
-                  elementType="lesson"
-                  action="edit"
-                  courseId={courseId}
-                  sectionId={sectionId}
-                  setKeepFocus={setKeepFocus}
-                  lessonId={lessonId}
-                  actionComponent={<FiEdit2 />}
-                />
-                <PopoverDeleteForm
-                  elementType="lesson"
-                  sectionId={sectionId}
-                  setKeepFocus={setKeepFocus}
-                  lessonId={lessonId}
-                  actionComponent={<FiTrash />}
-                />
-              </Flex>
+                  <PopoverEditForm
+                    elementType="lesson"
+                    action="edit"
+                    courseId={courseId}
+                    sectionId={sectionId}
+                    lessonId={lessonId}
+                    actionComponent={<FiEdit2 />}
+                  />
+                  <PopoverDeleteForm
+                    elementType="lesson"
+                    sectionId={sectionId}
+                    lessonId={lessonId}
+                    actionComponent={<FiTrash />}
+                  />
+                </Flex>
+              </HoverToShowWrapper>
+
               {!lesson?.videoEmbedUrl && !lesson?.isArticle && (
                 <Button
                   onClick={() => {
@@ -156,9 +157,6 @@ const LessonItem: React.FC<Props> = ({
                     : "Add Content"}
                 </Button>
               )}
-              <Box>
-                <Icon ml="2" w={3.5} h={3.5} as={FiMenu} />
-              </Box>
             </Flex>
           }
           {lesson?.videoEmbedUrl && lesson?.videoEmbedUrl !== "" ? (

@@ -25,7 +25,8 @@
     "noEmit": true,
     "incremental": true,
     "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "noErrorTruncation": true,
   },
   "typeRoots": ["./types", "./node_modules/@types"],
   "exclude": ["node_modules", "dist"],

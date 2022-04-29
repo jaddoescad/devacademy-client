@@ -35,27 +35,24 @@ import {
   changeLessonTitleService,
 } from "src/services/courseCurriculum";
 
-
 interface TextInputProps {
-  id: string,
-  label: string
+  id: string;
+  label: string;
 }
 
 // 1. Create a text input component
-const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(({...props}, ref) => {
+const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
+  ({ ...props }, ref) => {
+    const { id, label } = props as TextInputProps;
 
-  const {
-    id,
-    label
-  } = props as TextInputProps;
-
-  return (
-    <FormControl>
-      <FormLabel htmlFor={id}>{label}</FormLabel>
-      <Input ref={ref} id={id} />
-    </FormControl>
-  );
-});
+    return (
+      <FormControl>
+        <FormLabel htmlFor={id}>{label}</FormLabel>
+        <Input ref={ref} id={id} />
+      </FormControl>
+    );
+  }
+);
 
 // 2. Create the form
 const Form = ({
@@ -81,7 +78,6 @@ const Form = ({
         courseId: courseId,
       },
     });
-    
 
   return (
     <Box p={4}>
@@ -99,7 +95,7 @@ const Form = ({
             //   isDisabled
             colorScheme="teal"
             onClick={async () => {
-              console.log("test", props.test)
+              console.log("test", props.test);
               if (elementType === "section" && action === "create") {
                 createSectionService(
                   data,
@@ -145,23 +141,16 @@ const Form = ({
 const PopoverEditForm = (props) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = React.useRef(null);
-  const [showAddItem, setShowAddItem] = React.useState(false);
-  const [keepFocus, setKeepFocus] = React.useState(false);
-
-  
 
   return (
     <Box height="50px">
-      <Box
-        w={["100%", "100%", "100%", "100%"]}
-      >
+      <Box w={["100%", "100%", "100%", "100%"]}>
         <Popover
           isOpen={isOpen}
           initialFocusRef={firstFieldRef}
           onOpen={onOpen}
           onClose={() => {
             onClose();
-            setKeepFocus(false);
           }}
           placement="right"
           closeOnBlur={true}
@@ -170,20 +159,10 @@ const PopoverEditForm = (props) => {
             {props.actionComponent ? (
               <IconButton
                 aria-label="edit"
-                onClick={() => {
-                  setKeepFocus(true);
-                }}
                 icon={props.actionComponent}
               ></IconButton>
             ) : (
-              <Button
-                onClick={() => {
-                  setKeepFocus(true);
-                }}
-                width={"10px"}
-              >
-                Add
-              </Button>
+              <Button width={"10px"}>Add</Button>
             )}
           </PopoverTrigger>
           <PopoverContent>
@@ -196,7 +175,6 @@ const PopoverEditForm = (props) => {
                 firstFieldRef={firstFieldRef}
                 onCancel={() => {
                   onClose();
-                  setKeepFocus(false);
                 }}
               />
             </FocusLock>

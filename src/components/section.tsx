@@ -14,6 +14,7 @@ import { FiEdit2, FiTrash, FiTrash2, FiMenu } from "react-icons/fi";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { Icon } from "@chakra-ui/react";
 import PopoverDeleteForm from "./deleteForm";
+import HoverToShowWrapper from "./HoverToShowWrapper";
 
 interface Props {
   sectionId: string;
@@ -31,12 +32,6 @@ const Section: React.FC<Props> = ({
   courseId,
   ...props
 }) => {
-  const [showHeaderItem, setShowHeaderItem] = React.useState(false);
-  const [showAddSectionItem, setShowSectionItem] = React.useState(false);
-  const [keepFocus, setKeepFocus] = React.useState(false);
-  const [keepFocusSection, setKeepFocusSection] = React.useState(false);
-
-
   return (
     <Draggable key={sectionId} draggableId={sectionId} index={sectionIndex}>
       {(sectionDraggableProvided, snapshot) => (
@@ -44,24 +39,21 @@ const Section: React.FC<Props> = ({
           {...sectionDraggableProvided.draggableProps}
           ref={sectionDraggableProvided.innerRef}
         >
-          <Box
-            onMouseOver={() => setShowSectionItem(true)}
-            onMouseLeave={() => setShowSectionItem(false)}
-            height="50px"
-            width={"100%"}
-          >
+          <Box height="50px" width={"100%"}>
             <Box>
-              <PopoverEditForm
-                test="here"
-                setKeepFocus={setKeepFocusSection}
-                sectionIndex={sectionIndex}
-                elementType="section"
-                action="create"
-                courseData={courseData}
-                courseId={courseId}
-              />
+              <HoverToShowWrapper>
+                <PopoverEditForm
+                  test="1"
+                  sectionIndex={sectionIndex}
+                  elementType="section"
+                  action="create"
+                  courseData={courseData}
+                  courseId={courseId}
+                />
+              </HoverToShowWrapper>
             </Box>
           </Box>
+
           <Box
             border={"1px solid #212121"}
             backgroundColor="#F1F1F1"
@@ -74,36 +66,29 @@ const Section: React.FC<Props> = ({
                 pt="5"
                 fontSize={"18"}
                 {...sectionDraggableProvided.dragHandleProps}
-                onMouseOver={() => setShowHeaderItem(true)}
-                onMouseLeave={() => setShowHeaderItem(false)}
               >
                 <Flex align={"center"}>
                   <Text>{title}</Text>
-                  <Flex flex={1}>
+                  <HoverToShowWrapper>
                     <Flex flex={1}>
-                      <PopoverEditForm
-                      test="section"
-                        elementType="section"
-                        action="edit"
-                        sectionId={sectionId}
-                        setKeepFocus={setKeepFocus}
-                        actionComponent={<FiEdit2 />}
-                      />
-                      <PopoverDeleteForm
-                        elementType="section"
-                        courseId={courseId}
-                        sectionId={sectionId}
-                        setKeepFocus={setKeepFocus}
-                        actionComponent={<FiTrash />}
-                      />
+                      <Flex flex={1}>
+                        <PopoverEditForm
+                          test="section"
+                          courseId={courseId}
+                          elementType="section"
+                          action="edit"
+                          sectionId={sectionId}
+                          actionComponent={<FiEdit2 />}
+                        />
+                        <PopoverDeleteForm
+                          elementType="section"
+                          courseId={courseId}
+                          sectionId={sectionId}
+                          actionComponent={<FiTrash />}
+                        />
+                      </Flex>
                     </Flex>
-                    <Box>
-                      <PopoverDeleteForm
-                        courseId={courseId}
-                        actionComponent={<FiMenu />}
-                      />
-                    </Box>
-                  </Flex>
+                  </HoverToShowWrapper>
                 </Flex>
               </Box>
               <LessonList

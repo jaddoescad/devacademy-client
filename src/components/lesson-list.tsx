@@ -7,6 +7,7 @@ import PopoverEditForm from "./titleInputForm";
 
 import { useInstructorCourseQuery } from "src/generated/graphql";
 import { Box, Text } from "@chakra-ui/react";
+import HoverToShowWrapper from "./HoverToShowWrapper";
 
 const scrollContainerHeight = 250;
 
@@ -60,7 +61,6 @@ const InnerLessonList: React.FC<InnerLessonListProps> = ({
                     lessonId={lessonId}
                     lessonIndex={lessonIndex}
                     sectionId={sectionId}
-                    isdragging={dragSnapshot.isDragging}
                     courseId={courseId}
                     isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
                     provided={dragProvided}
@@ -71,22 +71,23 @@ const InnerLessonList: React.FC<InnerLessonListProps> = ({
             </Draggable>
           );
         })}
-
-      <Box height="50px">
-        <Box>
-          <PopoverEditForm
-            elementType="lesson"
-            action="create"
-            courseId={courseId}
-            lessonIndex={
-              data.course?.sections?.find((x) => x.id === sectionId)
-                ?.lessonOrder.length
-            }
-            sectionId={sectionId}
-            {...props}
-          />
+      <HoverToShowWrapper>
+        <Box height="50px">
+          <Box>
+            <PopoverEditForm
+              elementType="lesson"
+              action="create"
+              courseId={courseId}
+              lessonIndex={
+                data.course?.sections?.find((x) => x.id === sectionId)
+                  ?.lessonOrder.length
+              }
+              sectionId={sectionId}
+              {...props}
+            />
+          </Box>
         </Box>
-      </Box>
+      </HoverToShowWrapper>
     </Box>
   );
 };

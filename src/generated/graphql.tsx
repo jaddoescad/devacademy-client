@@ -172,7 +172,8 @@ export type MutationDeleteCourseArgs = {
 
 
 export type MutationDeleteLessonArgs = {
-  id: Scalars['String'];
+  lessonId: Scalars['String'];
+  sectionId: Scalars['String'];
 };
 
 
@@ -367,7 +368,8 @@ export type DeleteArticleMutationVariables = Exact<{
 export type DeleteArticleMutation = { __typename?: 'Mutation', deleteArticle: { __typename?: 'Lesson', id: string, isArticle?: boolean | null, articleText?: string | null } };
 
 export type DeleteLessonMutationVariables = Exact<{
-  deleteLessonId: Scalars['String'];
+  lessonId: Scalars['String'];
+  sectionId: Scalars['String'];
 }>;
 
 
@@ -864,8 +866,8 @@ export type DeleteArticleMutationHookResult = ReturnType<typeof useDeleteArticle
 export type DeleteArticleMutationResult = Apollo.MutationResult<DeleteArticleMutation>;
 export type DeleteArticleMutationOptions = Apollo.BaseMutationOptions<DeleteArticleMutation, DeleteArticleMutationVariables>;
 export const DeleteLessonDocument = gql`
-    mutation DeleteLesson($deleteLessonId: String!) {
-  deleteLesson(id: $deleteLessonId)
+    mutation DeleteLesson($lessonId: String!, $sectionId: String!) {
+  deleteLesson(lessonId: $lessonId, sectionId: $sectionId)
 }
     `;
 export type DeleteLessonMutationFn = Apollo.MutationFunction<DeleteLessonMutation, DeleteLessonMutationVariables>;
@@ -883,7 +885,8 @@ export type DeleteLessonMutationFn = Apollo.MutationFunction<DeleteLessonMutatio
  * @example
  * const [deleteLessonMutation, { data, loading, error }] = useDeleteLessonMutation({
  *   variables: {
- *      deleteLessonId: // value for 'deleteLessonId'
+ *      lessonId: // value for 'lessonId'
+ *      sectionId: // value for 'sectionId'
  *   },
  * });
  */

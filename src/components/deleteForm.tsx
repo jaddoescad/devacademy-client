@@ -30,13 +30,13 @@ import { IconType } from "react-icons";
 interface Props {
   onCancel: () => void;
   elementType: string;
-  sectionId:  string;
+  sectionId: string;
   lessonId: string;
   courseId: string;
 }
 
 // 2. Create the form
-const Form:React.FC<Props> = ({
+const Form: React.FC<Props> = ({
   onCancel,
   elementType,
   sectionId,
@@ -61,7 +61,8 @@ const Form:React.FC<Props> = ({
               if (elementType === "lesson") {
                 await deleteLesson({
                   variables: {
-                    deleteLessonId: lessonId,
+                    lessonId: lessonId,
+                    sectionId: sectionId
                   },
                   update: (cache, { data }) => {
                     cache.evict({
@@ -92,11 +93,11 @@ const Form:React.FC<Props> = ({
   );
 };
 
-
 interface PopOverEditProps {
-  setKeepFocus: (keepFocus: boolean) => void;
   courseData: any;
-  actionComponent: React.ReactElement<any, string | React.JSXElementConstructor<any>> | undefined;
+  actionComponent:
+    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+    | undefined;
   elementType: string;
   sectionId: string;
   lessonId: string;
@@ -105,7 +106,13 @@ interface PopOverEditProps {
 
 // 3. Create the Popover
 // Ensure you set `closeOnBlur` prop to false so it doesn't close on outside click
-const PopoverEditForm:React.FC<PopOverEditProps> = ({setKeepFocus, actionComponent, elementType, sectionId, courseId, lessonId }) => {
+const PopoverEditForm: React.FC<PopOverEditProps> = ({
+  actionComponent,
+  elementType,
+  sectionId,
+  courseId,
+  lessonId,
+}) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = React.useRef(null);
 
@@ -117,29 +124,15 @@ const PopoverEditForm:React.FC<PopOverEditProps> = ({setKeepFocus, actionCompone
         onOpen={onOpen}
         onClose={() => {
           onClose();
-          setKeepFocus(false);
         }}
         placement="right"
         closeOnBlur={true}
       >
         <PopoverTrigger>
           {actionComponent ? (
-            <IconButton
-              aria-label="edit"
-              onClick={() => {
-                setKeepFocus(true);
-              }}
-              icon={actionComponent}
-            ></IconButton>
+            <IconButton aria-label="edit" icon={actionComponent}></IconButton>
           ) : (
-            <Button
-              onClick={() => {
-                setKeepFocus(true);
-              }}
-              width={"10px"}
-            >
-              Add
-            </Button>
+            <Button width={"10px"}>Add</Button>
           )}
         </PopoverTrigger>
         <PopoverContent>
@@ -153,7 +146,6 @@ const PopoverEditForm:React.FC<PopOverEditProps> = ({setKeepFocus, actionCompone
               courseId={courseId}
               onCancel={() => {
                 onClose();
-                setKeepFocus(false);
               }}
             />
           </FocusLock>

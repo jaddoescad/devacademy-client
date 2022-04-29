@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import Section from "./section";
-import reorder, { reorderLessonMap } from "../utility/reorder";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { Box, Text } from "@chakra-ui/react";
 import PopoverEditForm from "./titleInputForm";
@@ -10,6 +9,7 @@ import {
   useChangeLessonOrderSameSectionMutation,
   useChangeLessonOrderDifferentSectionMutation,
 } from "src/generated/graphql";
+import HoverToShowWrapper from "./HoverToShowWrapper";
 
 import {
   reorderSectionService,
@@ -20,7 +20,7 @@ interface Props {
   courseId: string;
 }
 
-const Board: React.FC<Props> = ({courseId, ...props }) => {
+const Board: React.FC<Props> = ({ courseId, ...props }) => {
   const [changeSection] = useChangeSectionOrderMutation();
   const [changeLessonOrderSameSection] =
     useChangeLessonOrderSameSectionMutation();
@@ -104,7 +104,8 @@ const Board: React.FC<Props> = ({courseId, ...props }) => {
                   key={key}
                   sectionIndex={index}
                   title={
-                    courseData?.course?.sections?.find((x) => x.id === key)?.title || ""
+                    courseData?.course?.sections?.find((x) => x.id === key)
+                      ?.title || ""
                   }
                   sectionId={key}
                   courseData={courseData}
@@ -116,14 +117,16 @@ const Board: React.FC<Props> = ({courseId, ...props }) => {
           <Box mt="3">
             <Box height="50px">
               <Box width="100%">
-                <PopoverEditForm
-                  {...props}
-                  courseData={courseData}
-                  sectionIndex={courseData?.course?.sectionOrder.length}
-                  elementType="section"
-                  action="create"
-                  courseId={courseId}
-                />
+                <HoverToShowWrapper>
+                  <PopoverEditForm
+                    {...props}
+                    courseData={courseData}
+                    sectionIndex={courseData?.course?.sectionOrder.length}
+                    elementType="section"
+                    action="create"
+                    courseId={courseId}
+                  />
+                </HoverToShowWrapper>
               </Box>
             </Box>
           </Box>
