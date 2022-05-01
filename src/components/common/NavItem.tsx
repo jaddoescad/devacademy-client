@@ -14,7 +14,7 @@ import { IconType } from "react-icons";
 
 interface SidePanelProps {
   courseid: string;
-  icon: IconType;
+  icon: any;
   title: string;
   description: string;
   active: boolean;
@@ -53,7 +53,9 @@ const NavItem: React.FC<SidePanelProps> = ({ icon, title, description, active, n
               <Icon
                 fontSize="xl"
                 color={active ? "#82AAAD" : "gray.500"}
-              />
+              >
+                {icon}
+              </Icon>
               <Text ml={2} display={navSize == "small" ? "none" : "flex"}>
                 {title}
               </Text>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { Droppable, Draggable, DroppableProvided } from "react-beautiful-dnd";
 import LessonItem from "./lesson-item";
@@ -31,6 +31,9 @@ const InnerLessonList: React.FC<InnerLessonListProps> = ({
   sectionId,
   ...props
 }) => {
+  const [keepFocus, setKeepFocus] = useState(false);
+  
+
   const { data, error, loading, fetchMore, variables } =
     useInstructorCourseQuery({
       variables: {
@@ -71,7 +74,7 @@ const InnerLessonList: React.FC<InnerLessonListProps> = ({
             </Draggable>
           );
         })}
-      <HoverToShowWrapper>
+      <HoverToShowWrapper keepFocus={keepFocus}>
         <Box height="50px">
           <Box>
             <PopoverEditForm
@@ -83,6 +86,7 @@ const InnerLessonList: React.FC<InnerLessonListProps> = ({
                   ?.lessonOrder.length
               }
               sectionId={sectionId}
+              setKeepFocus={setKeepFocus}
               {...props}
             />
           </Box>
@@ -133,10 +137,6 @@ const LessonList: React.FC<LessonListProps> = ({
   sectionId,
   courseId,
 }) => {
-  // static defaultProps = {
-  //   listId: "LIST",
-  // };
-
   return (
     <Droppable
       droppableId={sectionId}

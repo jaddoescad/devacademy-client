@@ -95,6 +95,7 @@ export type Mutation = {
   login: InstructorResponse;
   logout: Scalars['Boolean'];
   register: InstructorResponse;
+  saveLandingPage: Course;
   setArticleText: Lesson;
   setVideoUrl: Lesson;
   updateCourse?: Maybe<Course>;
@@ -198,6 +199,14 @@ export type MutationRegisterArgs = {
 };
 
 
+export type MutationSaveLandingPageArgs = {
+  courseId: Scalars['String'];
+  description: Scalars['String'];
+  promoImage: Scalars['String'];
+  title: Scalars['String'];
+};
+
+
 export type MutationSetArticleTextArgs = {
   articleText: Scalars['String'];
   lessonId: Scalars['String'];
@@ -234,7 +243,7 @@ export type Query = {
   course?: Maybe<Course>;
   courses: PaginatedCourses;
   hellodude: Scalars['String'];
-  instructorCourse: Array<Course>;
+  instructorCourse: Course;
   instructorCourses: Array<Course>;
   lesson?: Maybe<Lesson>;
   me?: Maybe<Instructor>;
@@ -409,6 +418,16 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'InstructorResponse', instructor?: { __typename?: 'Instructor', email: string, createdAt: string, updatedAt: string, id: string, firstName: string, lastName: string, instructorTitle?: string | null, description?: string | null } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
+export type SaveLandingPageMutationVariables = Exact<{
+  promoImage: Scalars['String'];
+  description: Scalars['String'];
+  title: Scalars['String'];
+  courseId: Scalars['String'];
+}>;
+
+
+export type SaveLandingPageMutation = { __typename?: 'Mutation', saveLandingPage: { __typename?: 'Course', promoImage?: string | null, id: string, title: string, description?: string | null } };
+
 export type SetArticleTextMutationVariables = Exact<{
   articleText: Scalars['String'];
   lessonId: Scalars['String'];
@@ -447,6 +466,13 @@ export type InstructorCourseQueryVariables = Exact<{
 
 
 export type InstructorCourseQuery = { __typename?: 'Query', course?: { __typename?: 'Course', id: string, createdAt: string, updatedAt: string, title: string, description?: string | null, category?: string | null, promoVideo?: string | null, promoImage?: string | null, instructorId: string, tags: Array<string>, sectionOrder: Array<string>, sections?: Array<{ __typename?: 'Section', id: string, title: string, courseId: string, createdAt: string, updatedAt: string, lessonOrder: Array<string>, lessons?: Array<{ __typename?: 'Lesson', id: string, createdAt: string, updatedAt: string, title: string, sectionId: string, videoUri?: string | null, videoEmbedUrl?: string | null, isArticle?: boolean | null }> | null }> | null } | null };
+
+export type InstructorCourseLandingPageQueryVariables = Exact<{
+  courseId: Scalars['String'];
+}>;
+
+
+export type InstructorCourseLandingPageQuery = { __typename?: 'Query', instructorCourse: { __typename?: 'Course', id: string, promoImage?: string | null, description?: string | null, title: string } };
 
 export type InstructorCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1082,6 +1108,50 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const SaveLandingPageDocument = gql`
+    mutation SaveLandingPage($promoImage: String!, $description: String!, $title: String!, $courseId: String!) {
+  saveLandingPage(
+    promoImage: $promoImage
+    description: $description
+    title: $title
+    courseId: $courseId
+  ) {
+    promoImage
+    id
+    title
+    description
+  }
+}
+    `;
+export type SaveLandingPageMutationFn = Apollo.MutationFunction<SaveLandingPageMutation, SaveLandingPageMutationVariables>;
+
+/**
+ * __useSaveLandingPageMutation__
+ *
+ * To run a mutation, you first call `useSaveLandingPageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveLandingPageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveLandingPageMutation, { data, loading, error }] = useSaveLandingPageMutation({
+ *   variables: {
+ *      promoImage: // value for 'promoImage'
+ *      description: // value for 'description'
+ *      title: // value for 'title'
+ *      courseId: // value for 'courseId'
+ *   },
+ * });
+ */
+export function useSaveLandingPageMutation(baseOptions?: Apollo.MutationHookOptions<SaveLandingPageMutation, SaveLandingPageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SaveLandingPageMutation, SaveLandingPageMutationVariables>(SaveLandingPageDocument, options);
+      }
+export type SaveLandingPageMutationHookResult = ReturnType<typeof useSaveLandingPageMutation>;
+export type SaveLandingPageMutationResult = Apollo.MutationResult<SaveLandingPageMutation>;
+export type SaveLandingPageMutationOptions = Apollo.BaseMutationOptions<SaveLandingPageMutation, SaveLandingPageMutationVariables>;
 export const SetArticleTextDocument = gql`
     mutation SetArticleText($articleText: String!, $lessonId: String!) {
   setArticleText(articleText: $articleText, lessonId: $lessonId) {
@@ -1315,6 +1385,44 @@ export function useInstructorCourseLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type InstructorCourseQueryHookResult = ReturnType<typeof useInstructorCourseQuery>;
 export type InstructorCourseLazyQueryHookResult = ReturnType<typeof useInstructorCourseLazyQuery>;
 export type InstructorCourseQueryResult = Apollo.QueryResult<InstructorCourseQuery, InstructorCourseQueryVariables>;
+export const InstructorCourseLandingPageDocument = gql`
+    query InstructorCourseLandingPage($courseId: String!) {
+  instructorCourse(courseId: $courseId) {
+    id
+    promoImage
+    description
+    title
+  }
+}
+    `;
+
+/**
+ * __useInstructorCourseLandingPageQuery__
+ *
+ * To run a query within a React component, call `useInstructorCourseLandingPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInstructorCourseLandingPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInstructorCourseLandingPageQuery({
+ *   variables: {
+ *      courseId: // value for 'courseId'
+ *   },
+ * });
+ */
+export function useInstructorCourseLandingPageQuery(baseOptions: Apollo.QueryHookOptions<InstructorCourseLandingPageQuery, InstructorCourseLandingPageQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<InstructorCourseLandingPageQuery, InstructorCourseLandingPageQueryVariables>(InstructorCourseLandingPageDocument, options);
+      }
+export function useInstructorCourseLandingPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InstructorCourseLandingPageQuery, InstructorCourseLandingPageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<InstructorCourseLandingPageQuery, InstructorCourseLandingPageQueryVariables>(InstructorCourseLandingPageDocument, options);
+        }
+export type InstructorCourseLandingPageQueryHookResult = ReturnType<typeof useInstructorCourseLandingPageQuery>;
+export type InstructorCourseLandingPageLazyQueryHookResult = ReturnType<typeof useInstructorCourseLandingPageLazyQuery>;
+export type InstructorCourseLandingPageQueryResult = Apollo.QueryResult<InstructorCourseLandingPageQuery, InstructorCourseLandingPageQueryVariables>;
 export const InstructorCoursesDocument = gql`
     query InstructorCourses {
   instructorCourses {

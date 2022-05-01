@@ -6,16 +6,20 @@ import {
   Divider,
   Avatar,
   Heading,
+  Button,
 } from "@chakra-ui/react";
 
 import {
   FiMenu,
   FiHome,
   FiCalendar,
+  FiMoreHorizontal,
+  FiArchive
 } from "react-icons/fi";
 
 import NavItem from "./NavItem";
 import { useRouter } from "next/router";
+import { Book } from "react-feather";
 
 //prop types
 interface SidePanelProps {
@@ -61,7 +65,7 @@ const InstructorSidePanel: React.FC<SidePanelProps> = ({ courseid, name, selecte
           description=""
           active={selected === "curriculum" ? true : false}
           navSize={navSize}
-          icon={FiHome}
+          icon={<Book />}
           title="Curriculum"
           courseid={courseid}
           destination="curriculum"
@@ -70,11 +74,16 @@ const InstructorSidePanel: React.FC<SidePanelProps> = ({ courseid, name, selecte
           description=""
           active={selected=== "landingPage" ? true : false}
           navSize={navSize}
-          icon={FiCalendar}
+          icon={<FiArchive />}
           title="Landing Page"
           courseid={courseid}
           destination="landingPage"
         />
+
+        <Button>
+          Submit Course
+        </Button>
+
       </Flex>
 
       <Flex

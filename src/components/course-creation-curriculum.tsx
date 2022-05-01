@@ -27,6 +27,10 @@ const Board: React.FC<Props> = ({ courseId, ...props }) => {
   const [changeLessonOrderDifferentSection] =
     useChangeLessonOrderDifferentSectionMutation();
 
+  const [keepFocus, setKeepFocus] = React.useState(false);
+
+
+
   const {
     data: courseData,
     error,
@@ -117,7 +121,9 @@ const Board: React.FC<Props> = ({ courseId, ...props }) => {
           <Box mt="3">
             <Box height="50px">
               <Box width="100%">
-                <HoverToShowWrapper>
+                <HoverToShowWrapper
+                  keepFocus={keepFocus}
+                >
                   <PopoverEditForm
                     {...props}
                     courseData={courseData}
@@ -125,6 +131,7 @@ const Board: React.FC<Props> = ({ courseId, ...props }) => {
                     elementType="section"
                     action="create"
                     courseId={courseId}
+                    setKeepFocus={setKeepFocus}
                   />
                 </HoverToShowWrapper>
               </Box>

@@ -60,7 +60,10 @@ const LessonItem: React.FC<Props> = ({
   const [videoUrl, setVideoUrl] = useState("");
   const [setVideoUrlMutation] = useSetVideoUrlMutation();
   const router = useRouter();
+  const [keepFocus, setKeepFocus] = React.useState(false);
+  const [keepLessonFocus, setKeepLessonFocus] = React.useState(false);
 
+  setKeepLessonFocus
   const lesson = data?.course?.sections
     ?.find((x) => x.id === sectionId)
     ?.lessons?.find((x) => x.id === lessonId);
@@ -91,13 +94,14 @@ const LessonItem: React.FC<Props> = ({
     <Box>
       <Box width={"100%"} h="40px">
         <Box>
-          <HoverToShowWrapper>
+          <HoverToShowWrapper keepLessonFocus={keepLessonFocus}>
             <PopoverEditForm
               action="create"
               elementType="lesson"
               lessonIndex={lessonIndex}
               sectionId={sectionId}
               courseId={courseId}
+              setKeepLessonFocus={setKeepLessonFocus}
             />
           </HoverToShowWrapper>
         </Box>
@@ -117,10 +121,8 @@ const LessonItem: React.FC<Props> = ({
           {
             <Flex align={"center"}>
               <Text>{lesson?.title}</Text>
-              <HoverToShowWrapper>
+              <HoverToShowWrapper keepFocus={keepFocus}>
                 <Flex flex={1}>
-                  {/* <Icon ml="2" w={3.5} h={3.5} as={FiEdit2} /> */}
-
                   <PopoverEditForm
                     elementType="lesson"
                     action="edit"
@@ -128,11 +130,13 @@ const LessonItem: React.FC<Props> = ({
                     sectionId={sectionId}
                     lessonId={lessonId}
                     actionComponent={<FiEdit2 />}
+                    setKeepFocus={setKeepFocus}
                   />
                   <PopoverDeleteForm
                     elementType="lesson"
                     sectionId={sectionId}
                     lessonId={lessonId}
+                    setKeepFocus={setKeepFocus}
                     actionComponent={<FiTrash />}
                   />
                 </Flex>

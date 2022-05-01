@@ -148,8 +148,12 @@ const PopoverEditForm = (props) => {
         <Popover
           isOpen={isOpen}
           initialFocusRef={firstFieldRef}
-          onOpen={onOpen}
+          onOpen={() => {
+            props.setKeepFocus(true);
+            onOpen();
+          }}
           onClose={() => {
+            props.setKeepFocus(false);
             onClose();
           }}
           placement="right"
@@ -174,6 +178,7 @@ const PopoverEditForm = (props) => {
                 courseData={props.courseData}
                 firstFieldRef={firstFieldRef}
                 onCancel={() => {
+                  props.setKeepFocus(false);
                   onClose();
                 }}
               />

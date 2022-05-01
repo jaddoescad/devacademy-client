@@ -32,6 +32,10 @@ const Section: React.FC<Props> = ({
   courseId,
   ...props
 }) => {
+  const [keepFocus, setKeepFocus] = React.useState(false);
+  const [keepFocus2, setKeepFocus2] = React.useState(false);
+
+
   return (
     <Draggable key={sectionId} draggableId={sectionId} index={sectionIndex}>
       {(sectionDraggableProvided, snapshot) => (
@@ -41,7 +45,7 @@ const Section: React.FC<Props> = ({
         >
           <Box height="50px" width={"100%"}>
             <Box>
-              <HoverToShowWrapper>
+              <HoverToShowWrapper keepFocus={keepFocus2}>
                 <PopoverEditForm
                   test="1"
                   sectionIndex={sectionIndex}
@@ -49,6 +53,7 @@ const Section: React.FC<Props> = ({
                   action="create"
                   courseData={courseData}
                   courseId={courseId}
+                  setKeepFocus={setKeepFocus2}
                 />
               </HoverToShowWrapper>
             </Box>
@@ -69,7 +74,7 @@ const Section: React.FC<Props> = ({
               >
                 <Flex align={"center"}>
                   <Text>{title}</Text>
-                  <HoverToShowWrapper>
+                  <HoverToShowWrapper keepFocus={keepFocus}>
                     <Flex flex={1}>
                       <Flex flex={1}>
                         <PopoverEditForm
@@ -79,12 +84,14 @@ const Section: React.FC<Props> = ({
                           action="edit"
                           sectionId={sectionId}
                           actionComponent={<FiEdit2 />}
+                          setKeepFocus={setKeepFocus}
                         />
                         <PopoverDeleteForm
                           elementType="section"
                           courseId={courseId}
                           sectionId={sectionId}
                           actionComponent={<FiTrash />}
+                          setKeepFocus={setKeepFocus}
                         />
                       </Flex>
                     </Flex>

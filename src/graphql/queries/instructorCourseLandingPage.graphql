@@ -1,0 +1,8 @@
+query InstructorCourseLandingPage($courseId: String!) {
+  instructorCourse(courseId: $courseId) {
+    id
+    promoImage
+    description
+    title
+  }
+}

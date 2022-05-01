@@ -9,9 +9,6 @@ import {
   Button,
   IconButton,
   ButtonGroup,
-  FormControl,
-  FormLabel,
-  Input,
   Popover,
   PopoverArrow,
   PopoverCloseButton,
@@ -24,8 +21,7 @@ import {
 import React, { useEffect } from "react";
 import FocusLock from "react-focus-lock";
 import { withApollo } from "src/utils/withApollo";
-import { v4 as uuidv4 } from "uuid";
-import { IconType } from "react-icons";
+
 
 interface Props {
   onCancel: () => void;
@@ -62,7 +58,7 @@ const Form: React.FC<Props> = ({
                 await deleteLesson({
                   variables: {
                     lessonId: lessonId,
-                    sectionId: sectionId
+                    sectionId: sectionId,
                   },
                   update: (cache, { data }) => {
                     cache.evict({
@@ -102,6 +98,7 @@ interface PopOverEditProps {
   sectionId: string;
   lessonId: string;
   courseId: string;
+  setKeepFocus: (value: boolean) => void;
 }
 
 // 3. Create the Popover
@@ -112,6 +109,7 @@ const PopoverEditForm: React.FC<PopOverEditProps> = ({
   sectionId,
   courseId,
   lessonId,
+  setKeepFocus,
 }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = React.useRef(null);
@@ -121,8 +119,12 @@ const PopoverEditForm: React.FC<PopOverEditProps> = ({
       <Popover
         isOpen={isOpen}
         initialFocusRef={firstFieldRef}
-        onOpen={onOpen}
+        onOpen={() => {
+          setKeepFocus(true)
+          onOpen();
+        }}
         onClose={() => {
+          setKeepFocus(false);
           onClose();
         }}
         placement="right"
@@ -145,6 +147,7 @@ const PopoverEditForm: React.FC<PopOverEditProps> = ({
               lessonId={lessonId}
               courseId={courseId}
               onCancel={() => {
+                setKeepFocus(false);
                 onClose();
               }}
             />

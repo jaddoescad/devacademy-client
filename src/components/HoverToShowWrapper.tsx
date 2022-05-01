@@ -1,10 +1,15 @@
 import { Box } from "@chakra-ui/react";
 import React from "react";
 
-interface HoverToShowWrapperProps {}
+interface HoverToShowWrapperProps {
+    keepFocus?: boolean;
+    keepLessonFocus?: boolean;
+}
 
 export const HoverToShowWrapper: React.FC<HoverToShowWrapperProps> = ({
   children,
+  keepFocus,
+  keepLessonFocus
 }) => {
   const [hide, setHide] = React.useState(true);
 
@@ -20,7 +25,7 @@ export const HoverToShowWrapper: React.FC<HoverToShowWrapperProps> = ({
         setHide(true);
       }}
     >
-      <Box hidden={hide}>{children}</Box>
+      <Box hidden={keepFocus || keepLessonFocus ? false : hide}>{children}</Box>
     </Box>
   );
 };
