@@ -13,6 +13,8 @@ import {
   AccordionPanel,
   AccordionIcon,
 } from "@chakra-ui/react";
+import { CourseDisplay } from "src/components/course-display";
+
 interface CourseBodyProps {
   courseId: string;
 }
@@ -47,7 +49,7 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
               {data?.getPublishedCourse?.title}
             </Box>
             <Box>
-              {lessonData?.lesson?.videoEmbedUrl && (
+              {lessonData?.lesson?.videoEmbedUrl ? (
                 <Box>
                   <iframe
                     src={
@@ -62,6 +64,14 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
                     title="Untitled"
                   ></iframe>
                 </Box>
+              ) : lessonData?.lesson?.articleText ? (
+                <Box>
+                  <CourseDisplay
+                    textContent={lessonData?.lesson?.articleText}
+                  />
+                </Box>
+              ) : (
+                <Box>No Content</Box>
               )}
             </Box>
             <Box>
