@@ -94,7 +94,7 @@ import {
           <PaginationPrevious
             data-testid="previous-button"
             disabled={!hasPreviousPage}
-            color="white"
+            color="black"
             bg="made.black"
             _hover={{ bg: "made.80" }}
             leftIcon={<Icon as={ChevronLeft} />}
@@ -109,7 +109,7 @@ import {
               <PaginationSeparator
                 isDisabled={!hasNextPage && !hasPreviousPage}
                 onClick={() => console.warn("I'm clicking the separator")}
-                color="white"
+                color="black"
                 bg="made.black"
                 _hover={{ bg: "made.80" }}
                 size="lg"
@@ -130,7 +130,7 @@ import {
                 _current={{
                   bg: "made.black",
                   fontSize: "sm",
-                  color: "white",
+                  color: "black",
                   w: 7
                 }}
               />
@@ -140,7 +140,7 @@ import {
             data-testid="next-button"
             isDisabled={!hasNextPage}
             onClick={() => console.warn("I'm clicking the next")}
-            color="white"
+            color="black"
             bg="made.black"
             _hover={{ bg: "made.80" }}
             rightIcon={<Icon as={ChevronRight} />}

@@ -1,7 +1,4 @@
 import React, { Component, useEffect } from "react";
-import styled from "@emotion/styled";
-import { colors } from "@atlaskit/theme";
-import { grid, borderRadius } from "./constants";
 import { Draggable } from "react-beautiful-dnd";
 import LessonList from "./lesson-list";
 import { Box, Button, Flex, Text, IconButton } from "@chakra-ui/react";

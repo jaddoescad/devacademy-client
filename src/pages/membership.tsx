@@ -418,15 +418,137 @@
 
 // export default PropertyAddressDetail
 
+// @L2 optimized
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import Error from "next/error";
+import styled from "styled-components";
+import { Footer } from "src/components/organisms/Footer";
+import { Container } from "src/components/atoms/Container";
+import {
+  useAPY,
+  useGetMyStakingAmount,
+  usePropertyAuthor,
+  usePropertyName,
+} from "src/fixtures/dev-kit/hooks";
+import { useDetectChain } from "src/fixtures/wallet/hooks";
+import { isDenyProperty } from "src/config/utils";
+import { useMemo } from "react";
+import { Space } from "antd";
+import {
+  useGetSTokenPositions,
+  useGetStokenRewards,
+} from "src/fixtures/dev-kit/hooks";
+import { toNaturalNumber } from "src/fixtures/utility";
+import { useProvider } from "src/fixtures/wallet/hooks";
+import { useDetectSTokens } from "src/fixtures/dev-kit/hooks";
+import Navigation from "src/components/common/Navigation";
 
-import React from 'react'
+type Props = {};
 
-interface membershipProps {
+const Main = styled(Container)`
+  display: grid;
+  grid-gap: 3rem;
+  grid-template-columns: 1fr;
+  @media (min-width: 1024px) {
+    grid-gap: 3rem 2rem;
+  }
+`;
 
+const Wrap = styled.div`
+  margin: 1rem auto;
+  max-width: 1048px;
+`;
+
+const PropertyAddressDetail = (_: Props) => {
+  const propertyAddress = "0xfb049b86Da8D2F4e335eF2281537f5dddbE77393";
+
+  const { accountAddress: loggedInWallet, ethersProvider } = useProvider();
+
+  const { name: network } = useDetectChain(ethersProvider);
+  const isDeny = isDenyProperty(network, propertyAddress);
+
+  useEffect(() => {
+    console.log("loggedInWallet", network);
+  }, [network]);
+
+  return isDeny ? (
+    <Error statusCode={404} />
+  ) : (
+    <div>
+      <Navigation />
+      <div style={{ color: "white" }}>
+        <h1>Property Address Detail</h1>
+        <Wrap>
+          <Main>
+            {loggedInWallet && (
+              <Stake title="Stake" propertyAddress={propertyAddress} />
+            )}
+          </Main>
+        </Wrap>
+      </div>
+    </div>
+  );
+};
+
+export default PropertyAddressDetail;
+
+interface StakeProps {
+  className?: string;
+  title?: string;
+  propertyAddress: string;
 }
 
-export const membership: React.FC<membershipProps> = ({}) => {
-    return (<></>);
+export const Stake = ({ propertyAddress }: StakeProps) => {
+  const { accountAddress } = useProvider();
+  const { sTokens } = useDetectSTokens(propertyAddress, accountAddress);
+
+  useEffect(() => {
+    console.log("sTokens", sTokens);
+  }, [sTokens]);
+
+  return (
+    <div>
+      {sTokens?.map((stoken, idx) => (
+        <div key={idx}>
+          <PositionText sTokenId={stoken} />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+interface PositionTextProps {
+  sTokenId: number;
 }
 
-export default membership;
+export const PositionText = ({ sTokenId }: PositionTextProps) => {
+  const { positions } = useGetSTokenPositions(sTokenId);
+  const { rewards } = useGetStokenRewards(sTokenId);
+  const positionAmount = useMemo(
+    () => toNaturalNumber(positions?.amount).toFixed(),
+    [positions?.amount]
+  );
+  const rewardAmount = useMemo(
+    () => toNaturalNumber(rewards?.entireReward).dp(6).toFixed(),
+    [rewards?.entireReward]
+  );
+
+  useEffect(() => {
+    console.log("positions", positions);
+  }, [positions]);
+
+  return (
+    <Space size="large">
+      <div style={{ marginLeft: "8px", minWidth: "40px" }}>#{sTokenId}</div>
+      <div style={{ minWidth: "120px" }}>
+        <span>{positionAmount}</span>
+        <span style={{ fontSize: "0.6em", marginLeft: "2px" }}>Staked</span>
+      </div>
+      <div>
+        {rewardAmount.toString()}
+        <span style={{ fontSize: "0.6em", marginLeft: "2px" }}>Claimable</span>
+      </div>
+    </Space>
+  );
+};

@@ -28,7 +28,9 @@ const Course = () => {
           </Flex>
 
           {data.instructorCourses.map((course) => (
-            <NextLink href={`/course-creation-platform/${course.id}/landingPage`}>
+            <NextLink
+              href={`/course-creation-platform/${course.id}/landingPage`}
+            >
               <Center
                 ml="100px"
                 mr="100px"

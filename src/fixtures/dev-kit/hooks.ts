@@ -882,12 +882,15 @@ export const useBalanceOfAccountProperty = (propertyAddress?: string, accountAdd
 }
 
 export const useDetectSTokens = (propertyAddress?: string, accountAddress?: string) => {
-  const { nonConnectedEthersProvider } = useProvider()
-  const { name: chain } = useDetectChain(nonConnectedEthersProvider)
+  const { nonConnectedEthersProvider, ethersProvider } = useProvider()
+  const { name: chain } = useDetectChain(ethersProvider)
+
+  console.log("this property address", propertyAddress)
+
   const { data, error } = useSWR<UnwrapFunc<typeof detectStokens>, Error>(
     SWRCachePath.detectStokens(chain, propertyAddress, accountAddress),
     () =>
-      whenDefinedAll([nonConnectedEthersProvider, propertyAddress, accountAddress], ([client, property, account]) =>
+      whenDefinedAll([ethersProvider, propertyAddress, accountAddress], ([client, property, account]) =>
         detectStokens(client, property, account)
       ),
     { revalidateOnFocus: false, focusThrottleInterval: 0 }
@@ -899,7 +902,7 @@ export const useDetectSTokens = (propertyAddress?: string, accountAddress?: stri
   >(
     SWRCachePath.detectStokens(chain, propertyAddress, 'ALL'),
     () =>
-      whenDefinedAll([nonConnectedEthersProvider, propertyAddress], ([client, property]) =>
+      whenDefinedAll([ethersProvider, propertyAddress], ([client, property]) =>
         detectStokensByPropertyAddress(client, property)
       ),
     { revalidateOnFocus: false, focusThrottleInterval: 0 }
@@ -981,13 +984,13 @@ export const useGetSTokenOwnerOf = (sTokenId?: number) => {
 }
 
 export const useGetSTokenPositions = (sTokenId?: number) => {
-  const { nonConnectedEthersProvider } = useProvider()
-  const { name: chain } = useDetectChain(nonConnectedEthersProvider)
+  const { nonConnectedEthersProvider, ethersProvider } = useProvider()
+  const { name: chain } = useDetectChain(ethersProvider)
   const { currency, toCurrency } = useCurrency()
   const { data, error } = useSWR<UnwrapFunc<typeof getStokenPositions>, Error>(
     SWRCachePath.getStokenPositions(chain, `${sTokenId}`),
     () =>
-      whenDefinedAll([nonConnectedEthersProvider, sTokenId], ([client, sTokenId]) =>
+      whenDefinedAll([ethersProvider, sTokenId], ([client, sTokenId]) =>
         getStokenPositions(client, sTokenId)
       ),
     { revalidateOnFocus: false, focusThrottleInterval: 0 }
@@ -997,14 +1000,14 @@ export const useGetSTokenPositions = (sTokenId?: number) => {
 }
 
 export const useGetStokenRewards = (sTokenId?: number) => {
-  const { nonConnectedEthersProvider } = useProvider()
-  const { name: chain } = useDetectChain(nonConnectedEthersProvider)
+  const { nonConnectedEthersProvider, ethersProvider } = useProvider()
+  const { name: chain } = useDetectChain(ethersProvider)
   const shouldFetch = chain && sTokenId
   const { currency, toCurrency } = useCurrency()
   const { data, error } = useSWR<UnwrapFunc<typeof getStokenRewards>, Error>(
     shouldFetch ? SWRCachePath.getStokenRewards(chain, `${sTokenId}`) : null,
     () =>
-      whenDefinedAll([nonConnectedEthersProvider, sTokenId], ([client, sTokenId]) =>
+      whenDefinedAll([ethersProvider, sTokenId], ([client, sTokenId]) =>
         getStokenRewards(client, sTokenId)
       ),
     { revalidateOnFocus: false, focusThrottleInterval: 0 }

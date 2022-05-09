@@ -15,7 +15,7 @@ export const HoverToShowWrapper: React.FC<HoverToShowWrapperProps> = ({
 
   return (
     <Box
-      width={"100%"}
+    flex={1}
       height="50px"
       onMouseEnter={(e) => {
         console.log("entered");

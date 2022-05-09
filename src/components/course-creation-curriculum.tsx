@@ -43,6 +43,11 @@ const Board: React.FC<Props> = ({ courseId, ...props }) => {
     },
   });
 
+  useEffect(() => {
+    console.log("courseData", courseData?.course);
+  }, [courseData]);
+
+  
   const onDragEnd = (result: any) => {
     if (courseData) {
       // dropped nowhere
@@ -127,7 +132,7 @@ const Board: React.FC<Props> = ({ courseId, ...props }) => {
                   <PopoverEditForm
                     {...props}
                     courseData={courseData}
-                    sectionIndex={courseData?.course?.sectionOrder.length}
+                    sectionIndex={courseData?.course?.sectionOrder.length ? courseData?.course?.sectionOrder.length : 0}
                     elementType="section"
                     action="create"
                     courseId={courseId}

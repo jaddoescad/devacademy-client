@@ -1,0 +1,33 @@
+query GetPublishedCourse($getPublishedCourseId: String!) {
+  getPublishedCourse(id: $getPublishedCourseId) {
+    id
+    createdAt
+    updatedAt
+    title
+    description
+    sections {
+      id
+      title
+      courseId
+      createdAt
+      updatedAt
+      lessonOrder
+      lessons {
+        id
+        createdAt
+        updatedAt
+        title
+        sectionId
+        videoUri
+        videoEmbedUrl
+        isArticle
+      }
+    }
+    category
+    promoVideo
+    promoImage
+    instructorId
+    tags
+    sectionOrder
+  }
+}

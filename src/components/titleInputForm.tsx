@@ -95,8 +95,12 @@ const Form = ({
             //   isDisabled
             colorScheme="teal"
             onClick={async () => {
-              console.log("test", props.test);
               if (elementType === "section" && action === "create") {
+                console.log(courseId);
+                console.log(sectionIndex);
+                console.log(courseId);
+                console.log(data);
+
                 createSectionService(
                   data,
                   sectionIndex,
@@ -105,7 +109,6 @@ const Form = ({
                   firstFieldRef.current.value
                 );
               } else if (elementType === "lesson" && action === "create") {
-                console.log("create lesson");
                 createLessonService(
                   data,
                   lessonIndex,
@@ -114,6 +117,7 @@ const Form = ({
                   firstFieldRef.current.value
                 );
               } else if (elementType === "section" && action === "edit") {
+                console.log("change section title");
                 changeSectionTitleService(
                   sectionId,
                   firstFieldRef.current.value,

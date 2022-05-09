@@ -27,7 +27,6 @@ export const createSectionService = async (
   title: string
 ) => {
   let sectionId = uuidv4();
-  // data?.course?.sectionOrder
   if (data?.course?.sectionOrder) {
     let sectionOrder = [
       ...data.course.sectionOrder.slice(0, sectionIndex),
@@ -52,6 +51,8 @@ export const createSectionService = async (
         });
       },
     });
+  } else {
+    console.log("no section order");
   }
 };
 
@@ -110,11 +111,11 @@ export const changeSectionTitleService = async (
         title: title,
       },
     },
-    // update: (cache: ApolloCache<any>) => {
-    //   cache.evict({
-    //     fieldName: "course",
-    //   });
-    // },
+    update: (cache: ApolloCache<any>) => {
+      cache.evict({
+        fieldName: "course",
+      });
+    },
   });
 };
 

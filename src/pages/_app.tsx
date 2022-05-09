@@ -27,6 +27,8 @@ const client = new ApolloClient({
 });
 
 
+
+
 class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
   state = {
     isCurrencyDEV: true,
@@ -145,7 +147,7 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
     const { Component, pageProps, apollo } = this.props;
 
     return (
-      // <ApolloProvider client={client}>
+      <ApolloProvider client={client}>
       <ChakraProvider theme={theme}>
         <WalletContext.Provider
           value={{
@@ -167,7 +169,7 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
           <Component {...pageProps} /*apollo={apollo}*/ />
         </WalletContext.Provider>
       </ChakraProvider>
-      // </ApolloProvider>
+      </ApolloProvider>
     );
   }
 }

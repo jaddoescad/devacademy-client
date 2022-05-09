@@ -1,0 +1,10 @@
+query GetLessonContent($lessonId: String!) {
+  lesson(id: $lessonId) {
+    id
+    articleText
+    isArticle
+    videoState
+    videoUri
+    videoEmbedUrl
+  }
+}

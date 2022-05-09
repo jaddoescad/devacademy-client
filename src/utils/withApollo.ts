@@ -62,3 +62,12 @@ export const withApollo = createWithApollo(createClient);
 //     },
 //   },
 // });
+
+// const devProtocolCache = new InMemoryCache()
+// const createDevProtocolClient = (ctx: NextPageContext) =>
+//   new ApolloClient({
+//     uri: 'https://api.devprotocol.xyz/v1/graphql',
+//     cache: devProtocolCache
+//   });
+
+// export const withDevProtocolApollo = createWithApollo(createDevProtocolClient);

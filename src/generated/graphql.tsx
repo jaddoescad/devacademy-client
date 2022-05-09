@@ -25,6 +25,7 @@ export type Course = {
   instructorId: Scalars['String'];
   promoImage?: Maybe<Scalars['String']>;
   promoVideo?: Maybe<Scalars['String']>;
+  publishedStatus?: Maybe<Scalars['String']>;
   sectionOrder: Array<Scalars['String']>;
   sections?: Maybe<Array<Section>>;
   tags: Array<Scalars['String']>;
@@ -86,6 +87,7 @@ export type Mutation = {
   changeSectionTitle: Section;
   createCourse: Course;
   createLesson: Scalars['Boolean'];
+  createPublished: Course;
   createSection: Scalars['Boolean'];
   deleteArticle: Lesson;
   deleteCourse: Scalars['Boolean'];
@@ -151,6 +153,11 @@ export type MutationCreateLessonArgs = {
   lessonOrder: Array<Scalars['String']>;
   sectionId: Scalars['String'];
   title: Scalars['String'];
+};
+
+
+export type MutationCreatePublishedArgs = {
+  courseId: Scalars['String'];
 };
 
 
@@ -242,6 +249,7 @@ export type Query = {
   __typename?: 'Query';
   course?: Maybe<Course>;
   courses: PaginatedCourses;
+  getPublishedCourse?: Maybe<Course>;
   hellodude: Scalars['String'];
   instructorCourse: Course;
   instructorCourses: Array<Course>;
@@ -258,6 +266,11 @@ export type QueryCourseArgs = {
 export type QueryCoursesArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
+};
+
+
+export type QueryGetPublishedCourseArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -459,6 +472,20 @@ export type GetLessonQueryVariables = Exact<{
 
 
 export type GetLessonQuery = { __typename?: 'Query', lesson?: { __typename?: 'Lesson', id: string, articleText?: string | null } | null };
+
+export type GetLessonContentQueryVariables = Exact<{
+  lessonId: Scalars['String'];
+}>;
+
+
+export type GetLessonContentQuery = { __typename?: 'Query', lesson?: { __typename?: 'Lesson', id: string, articleText?: string | null, isArticle?: boolean | null, videoState?: string | null, videoUri?: string | null, videoEmbedUrl?: string | null } | null };
+
+export type GetPublishedCourseQueryVariables = Exact<{
+  getPublishedCourseId: Scalars['String'];
+}>;
+
+
+export type GetPublishedCourseQuery = { __typename?: 'Query', getPublishedCourse?: { __typename?: 'Course', id: string, createdAt: string, updatedAt: string, title: string, description?: string | null, category?: string | null, promoVideo?: string | null, promoImage?: string | null, instructorId: string, tags: Array<string>, sectionOrder: Array<string>, sections?: Array<{ __typename?: 'Section', id: string, title: string, courseId: string, createdAt: string, updatedAt: string, lessonOrder: Array<string>, lessons?: Array<{ __typename?: 'Lesson', id: string, createdAt: string, updatedAt: string, title: string, sectionId: string, videoUri?: string | null, videoEmbedUrl?: string | null, isArticle?: boolean | null }> | null }> | null } | null };
 
 export type InstructorCourseQueryVariables = Exact<{
   courseId: Scalars['String'];
@@ -1322,6 +1349,109 @@ export function useGetLessonLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type GetLessonQueryHookResult = ReturnType<typeof useGetLessonQuery>;
 export type GetLessonLazyQueryHookResult = ReturnType<typeof useGetLessonLazyQuery>;
 export type GetLessonQueryResult = Apollo.QueryResult<GetLessonQuery, GetLessonQueryVariables>;
+export const GetLessonContentDocument = gql`
+    query GetLessonContent($lessonId: String!) {
+  lesson(id: $lessonId) {
+    id
+    articleText
+    isArticle
+    videoState
+    videoUri
+    videoEmbedUrl
+  }
+}
+    `;
+
+/**
+ * __useGetLessonContentQuery__
+ *
+ * To run a query within a React component, call `useGetLessonContentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLessonContentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLessonContentQuery({
+ *   variables: {
+ *      lessonId: // value for 'lessonId'
+ *   },
+ * });
+ */
+export function useGetLessonContentQuery(baseOptions: Apollo.QueryHookOptions<GetLessonContentQuery, GetLessonContentQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLessonContentQuery, GetLessonContentQueryVariables>(GetLessonContentDocument, options);
+      }
+export function useGetLessonContentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLessonContentQuery, GetLessonContentQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLessonContentQuery, GetLessonContentQueryVariables>(GetLessonContentDocument, options);
+        }
+export type GetLessonContentQueryHookResult = ReturnType<typeof useGetLessonContentQuery>;
+export type GetLessonContentLazyQueryHookResult = ReturnType<typeof useGetLessonContentLazyQuery>;
+export type GetLessonContentQueryResult = Apollo.QueryResult<GetLessonContentQuery, GetLessonContentQueryVariables>;
+export const GetPublishedCourseDocument = gql`
+    query GetPublishedCourse($getPublishedCourseId: String!) {
+  getPublishedCourse(id: $getPublishedCourseId) {
+    id
+    createdAt
+    updatedAt
+    title
+    description
+    sections {
+      id
+      title
+      courseId
+      createdAt
+      updatedAt
+      lessonOrder
+      lessons {
+        id
+        createdAt
+        updatedAt
+        title
+        sectionId
+        videoUri
+        videoEmbedUrl
+        isArticle
+      }
+    }
+    category
+    promoVideo
+    promoImage
+    instructorId
+    tags
+    sectionOrder
+  }
+}
+    `;
+
+/**
+ * __useGetPublishedCourseQuery__
+ *
+ * To run a query within a React component, call `useGetPublishedCourseQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPublishedCourseQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPublishedCourseQuery({
+ *   variables: {
+ *      getPublishedCourseId: // value for 'getPublishedCourseId'
+ *   },
+ * });
+ */
+export function useGetPublishedCourseQuery(baseOptions: Apollo.QueryHookOptions<GetPublishedCourseQuery, GetPublishedCourseQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPublishedCourseQuery, GetPublishedCourseQueryVariables>(GetPublishedCourseDocument, options);
+      }
+export function useGetPublishedCourseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPublishedCourseQuery, GetPublishedCourseQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPublishedCourseQuery, GetPublishedCourseQueryVariables>(GetPublishedCourseDocument, options);
+        }
+export type GetPublishedCourseQueryHookResult = ReturnType<typeof useGetPublishedCourseQuery>;
+export type GetPublishedCourseLazyQueryHookResult = ReturnType<typeof useGetPublishedCourseLazyQuery>;
+export type GetPublishedCourseQueryResult = Apollo.QueryResult<GetPublishedCourseQuery, GetPublishedCourseQueryVariables>;
 export const InstructorCourseDocument = gql`
     query InstructorCourse($courseId: String!) {
   course(id: $courseId) {
