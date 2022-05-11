@@ -19,6 +19,7 @@ import { providers } from "ethers";
 import { connectWallet } from "../fixtures/wallet/utility";
 import { theme } from "../theme";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import FullMembershipContext, { fullMembership } from "src/context/fullMembershipContext";
 
 const cache = new InMemoryCache();
 const client = new ApolloClient({
@@ -36,6 +37,7 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
     ethersProvider: undefined,
     web3Modal: undefined,
     address: undefined,
+    fullMembership: false,
   };
 
   getProviderOptions = () => {
@@ -143,10 +145,17 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
     this.setState({ isCurrencyDEV: !this.state.isCurrencyDEV });
   };
 
+  updateFullMembership = (status) => {
+    this.setState({ fullMembership: status })
+  }
+
   render() {
     const { Component, pageProps, apollo } = this.props;
 
     return (
+      <FullMembershipContext.Provider
+        value={{fullMembership: this.state.fullMembership, setFullMembership: this.updateFullMembership}}
+      >
       <ApolloProvider client={client}>
       <ChakraProvider theme={theme}>
         <WalletContext.Provider
@@ -170,6 +179,7 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
         </WalletContext.Provider>
       </ChakraProvider>
       </ApolloProvider>
+      </FullMembershipContext.Provider>
     );
   }
 }

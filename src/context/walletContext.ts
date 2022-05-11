@@ -9,6 +9,7 @@ interface IWallet {
   web3Modal?: Web3Modal
   address?: string
   setProviders: Function
+  stokenValue?: number
 }
 
 export const wallet: IWallet = {
@@ -16,7 +17,8 @@ export const wallet: IWallet = {
   ethersProvider: undefined,
   web3Modal: undefined,
   address: undefined,
-  setProviders: () => {}
+  setProviders: () => {},
+  stokenValue: undefined,
 }
 
 const WalletContext = createContext(wallet)

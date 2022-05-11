@@ -1,17 +1,10 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { connect } from "react-redux";
-// import MarkdownIt from 'markdown-it'
 import "react-markdown-editor-lite/lib/index.css";
 import hljs from "highlight.js";
 import ReactMarkdown from "react-markdown";
 import "react-markdown-editor-lite/lib/index.css";
 import {
-  atelierCaveLight,
-  atelierLakesideLight,
-  codepenEmbed,
-  monoBlue,
-  nightOwl,
-  ocean,
   atomOneLight,
 } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import remarkMath from "remark-math";
@@ -20,7 +13,8 @@ import "katex/dist/katex.min.css";
 import PropTypes from "prop-types";
 import SyntaxHighlighter from "react-syntax-highlighter";
 
-const gfm = require("remark-gfm");
+
+import gfm from "remark-gfm";
 
 interface CourseDisplayProps {
   textContent: string;
@@ -59,7 +53,7 @@ export const CourseDisplay: React.FC<CourseDisplayProps> = ({
     },
   };
   return (
-    <div className="custom-html-style" style={{ paddingBottom: "30px" }}>
+    <div className="custom-html-style" style={{ }}>
       <ReactMarkdown
         components={components}
         rehypePlugins={[rehypeKatex]}

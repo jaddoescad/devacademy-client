@@ -35,8 +35,13 @@ export const useConnectWallet = () => {
   const { web3Modal, setProviders } = useContext(WalletContext)
 
   const connect = async () => {
+    console.log("connecting wallet")
     return connectWallet(setProviders, web3Modal).then(result => {
+      console.log("connected wallet", result)
       return result
+    }).catch(err => {
+      console.log("error connecting wallet", err)
+      return false
     })
   }
 

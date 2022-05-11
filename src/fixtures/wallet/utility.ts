@@ -18,13 +18,14 @@ export type ChainName = UndefinedOr<
 const signCacheContainer: Map<string, signCache> = new Map()
 
 export const connectWallet = async (setProvidersHandler: Function, web3Modal?: Web3Modal) => {
+  console.log("web3Modal",web3Modal)
   const provider = await web3Modal?.connect().catch(() => {
     return undefined
   })
   if (provider === undefined) {
     return false
   }
-
+  
   const web3: Web3 = new Web3(provider)
   const ethersProvider = new providers.Web3Provider(provider)
   if (web3 && ethersProvider) {

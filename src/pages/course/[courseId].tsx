@@ -15,10 +15,8 @@ export const Course: React.FC<CourseProps> = ({}) => {
       display="flex"
       flexDir={"column"}
       backgroundColor={"white"}
-      minH="100vh"
       w="100%"
     >
-      <Navigation />
       {typeof router?.query?.courseId === "string" ? (
         <CourseBody courseId={router.query.courseId} />
       ) : (

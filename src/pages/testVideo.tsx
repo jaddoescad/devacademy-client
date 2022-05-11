@@ -6,10 +6,10 @@ interface testVideoProps {}
 
 export const testVideo: React.FC<testVideoProps> = ({}) => {
 
-    useEffect(() => {
-        console.log("checking")
-        checkTranscode()
-    }, [])
+    // useEffect(() => {
+    //     console.log("checking")
+    //     checkTranscode()
+    // }, [])
 
   return (
     <Box>

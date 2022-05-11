@@ -22,6 +22,16 @@ import {
   AddIcon,
   ChevronDownIcon,
 } from "@chakra-ui/icons";
+import { isDenyProperty } from "src/config/utils";
+import { useMemo } from "react";
+import { Space } from "antd";
+import {
+  useGetSTokenPositions,
+  useGetStokenRewards,
+} from "src/fixtures/dev-kit/hooks";
+import { toNaturalNumber } from "src/fixtures/utility";
+import { useDetectSTokens } from "src/fixtures/dev-kit/hooks";
+import { getStokenPositions } from "src/fixtures/dev-kit/client";
 
 import { ReactNode } from "react";
 import {
@@ -44,6 +54,7 @@ import {
   Center,
   Img,
 } from "@chakra-ui/react";
+import StokenValueContext from "src/context/fullMembershipContext";
 
 const Grid = styled.div`
   display: grid;
@@ -131,7 +142,7 @@ const createSwitchNetwork =
     const res = await switchChain(chainName, provider);
   };
 
-export default function Navigation() {
+export default function Navigation({ isNotMaxW, courseTitle }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const { connect, disconnect } = useConnectWallet();
@@ -140,12 +151,40 @@ export default function Navigation() {
   const { address } = useContext(WalletContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { name } = useDetectChain(ethersProvider);
+  const propertyAddress = "0xfb049b86Da8D2F4e335eF2281537f5dddbE77393";
+  const { fullMembership, setFullMembership } = useContext(StokenValueContext);
+
+  const { name: network } = useDetectChain(ethersProvider);
+  const isDeny = isDenyProperty(network, propertyAddress);
+  const { sTokens } = useDetectSTokens(propertyAddress, accountAddress);
+
+  useEffect(() => {
+    console.log("sTokens", fullMembership);
+  }, [sTokens]);
+
+  React.useEffect(() => {
+    setFullMembership(false);
+    if (!isDeny) {
+      if (accountAddress && sTokens) {
+        sTokens.forEach((sToken) => {
+          getStokenPositions(ethersProvider!, sToken).then((positionStoken) => {
+            const totalStake = parseFloat(
+              toNaturalNumber(positionStoken?.amount).toFixed()
+            );
+            if (totalStake > 100) {
+              setFullMembership(true);
+            }
+          });
+        });
+      }
+    }
+  }, [isDeny, accountAddress, sTokens]);
 
   return (
     <>
-      <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
+      <Box bg={useColorModeValue("gray.100", "gray.900")} width="100%" px={4}>
         <Center>
-          <Box w={"100%"} maxW="1200px">
+          <Box w={"100%"} maxW={isNotMaxW ? "100%" : "1200px"}>
             <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
               <HStack spacing={8} alignItems={"center"}>
                 <Link>
@@ -153,7 +192,14 @@ export default function Navigation() {
                     <Img src={"/logo-black.png"} />
                   </Box>
                 </Link>
+
+                {courseTitle && (
+                  <Box fontWeight={"bold"} color={"black"}>
+                    {courseTitle}
+                  </Box>
+                )}
               </HStack>
+
               <Flex alignItems={"center"}>
                 {address && (
                   <Menu>
