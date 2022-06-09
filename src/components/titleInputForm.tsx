@@ -20,13 +20,13 @@ import {
 } from "@chakra-ui/react";
 import React, { HTMLInputTypeAttribute, useEffect, useRef } from "react";
 import FocusLock from "react-focus-lock";
-import {
-  useInstructorCourseQuery,
-  useCreateSectionMutation,
-  useCreateLessonMutation,
-  useChangeSectionTitleMutation,
-  useChangeLessonTitleMutation,
-} from "src/generated/graphql";
+// import {
+//   useInstructorCourseQuery,
+//   useCreateSectionMutation,
+//   useCreateLessonMutation,
+//   useChangeSectionTitleMutation,
+//   useChangeLessonTitleMutation,
+// } from "src/generated/graphql";
 import { withApollo } from "src/utils/withApollo";
 import {
   createSectionService,
@@ -65,19 +65,20 @@ const Form = ({
   lessonId,
   action,
   courseId,
+  course,
   ...props
 }) => {
-  const [createSectionMutation] = useCreateSectionMutation();
-  const [createLesson] = useCreateLessonMutation();
-  const [changeSectionTitle] = useChangeSectionTitleMutation();
-  const [changeLessonTitle] = useChangeLessonTitleMutation();
+  // const [createSectionMutation] = useCreateSectionMutation();
+  // const [createLesson] = useCreateLessonMutation();
+  // const [changeSectionTitle] = useChangeSectionTitleMutation();
+  // const [changeLessonTitle] = useChangeLessonTitleMutation();
 
-  const { data, error, loading, fetchMore, variables } =
-    useInstructorCourseQuery({
-      variables: {
-        courseId: courseId,
-      },
-    });
+  // const { data, error, loading, fetchMore, variables } =
+  //   useInstructorCourseQuery({
+  //     variables: {
+  //       courseId: courseId,
+  //     },
+  //   });
 
   return (
     <Box p={4}>
@@ -96,38 +97,33 @@ const Form = ({
             colorScheme="teal"
             onClick={async () => {
               if (elementType === "section" && action === "create") {
-                console.log(courseId);
-                console.log(sectionIndex);
-                console.log(courseId);
-                console.log(data);
-
                 createSectionService(
-                  data,
+                  course,
                   sectionIndex,
-                  createSectionMutation,
                   courseId,
                   firstFieldRef.current.value
-                );
+                ).catch((err) => {
+                  console.log(err);
+                });
               } else if (elementType === "lesson" && action === "create") {
                 createLessonService(
-                  data,
+                  course,
                   lessonIndex,
-                  createLesson,
-                  sectionId,
-                  firstFieldRef.current.value
-                );
-              } else if (elementType === "section" && action === "edit") {
-                console.log("change section title");
-                changeSectionTitleService(
                   sectionId,
                   firstFieldRef.current.value,
-                  changeSectionTitle
+                  courseId
+                );
+              } else if (elementType === "section" && action === "edit") {
+                changeSectionTitleService(
+                  sectionId,
+                  courseId,
+                  firstFieldRef.current.value
                 );
               } else if (elementType === "lesson" && action === "edit") {
                 changeLessonTitleService(
                   lessonId,
-                  firstFieldRef.current.value,
-                  changeLessonTitle
+                  courseId,
+                  firstFieldRef.current.value
                 );
               }
             }}

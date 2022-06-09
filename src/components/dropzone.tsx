@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { uploadVideo } from "src/services/uploadVideo";
 import { Progress } from "@chakra-ui/react";
-import { useSetVideoUrlMutation } from "src/generated/graphql";
+// import { useSetVideoUrlMutation } from "src/generated/graphql";
 
 interface Props {
   lessonId: string;
@@ -18,7 +18,7 @@ const MyDropzone: React.FC<Props> = ({ lessonId }) => {
     videoURI: "",
   });
 
-  const [setVideoUrlMutation] = useSetVideoUrlMutation();
+  // const [setVideoUrlMutation] = useSetVideoUrlMutation();
 
   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.forEach((file: File) => {
@@ -51,25 +51,25 @@ const MyDropzone: React.FC<Props> = ({ lessonId }) => {
       videoData.videoEmbedUrl &&
       videoData.videoURI
     ) {
-      setVideoUrlMutation({
-        variables: {
-          lessonId: lessonId,
-          videoEmbedUrl: videoData.videoEmbedUrl,
-          videoUri: videoData.videoURI,
-        },
-        optimisticResponse: {
-          __typename: "Mutation",
-          setVideoUrl: {
-            __typename: "Lesson",
-            id: lessonId,
-            videoEmbedUrl: videoData.videoEmbedUrl,
-            videoUri: videoData.videoURI,
-          },
-        },
-        update: (cache) => {
-          cache.evict({ fieldName: "course" });
-        },
-      });
+      // setVideoUrlMutation({
+      //   variables: {
+      //     lessonId: lessonId,
+      //     videoEmbedUrl: videoData.videoEmbedUrl,
+      //     videoUri: videoData.videoURI,
+      //   },
+      //   optimisticResponse: {
+      //     __typename: "Mutation",
+      //     setVideoUrl: {
+      //       __typename: "Lesson",
+      //       id: lessonId,
+      //       videoEmbedUrl: videoData.videoEmbedUrl,
+      //       videoUri: videoData.videoURI,
+      //     },
+      //   },
+      //   update: (cache) => {
+      //     cache.evict({ fieldName: "course" });
+      //   },
+      // });
     }
   }, [videoData]);
   return (
@@ -83,7 +83,7 @@ const MyDropzone: React.FC<Props> = ({ lessonId }) => {
       {...getRootProps()}
     >
       <input type="file" {...getInputProps()} />
-      <p>Drag 'n' drop some files here, or click to select files</p>
+      <p>{"Drag 'n' drop some files here, or click to select files"}</p>
       <p>{title}</p>
       {!finished ? <Progress value={progress} /> : <p>Finished</p>}
     </div>

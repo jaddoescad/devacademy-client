@@ -2,55 +2,51 @@ import React, { useEffect } from "react";
 import { withApollo } from "../../../utils/withApollo";
 import { useRouter } from "next/router";
 import InstructorSidePanel from "src/components/common/instructorSidePanel";
-import { useMeQuery } from "src/generated/graphql";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { InstructorNavigation } from "src/components/common/InstructorNavigation";
 import { InputField } from "src/components/InputField";
 import { Form, Formik } from "formik";
 import { Wrapper } from "src/components/Wrapper";
 import NextLink from "next/link";
-import { toErrorMap } from "src/utils/toErrorMap";
 import FileUpload from "src/components/image-upload";
-import { uploadImageToFirebase } from "src/firebase.js";
-import {
-  useSaveLandingPageMutation,
-  useInstructorCourseLandingPageQuery,
-} from "src/generated/graphql";
+import { uploadImageToFirebase } from "src/services/firStorage";
+import { getCourse, saveCourseInfoWithImage, saveCourseInfoWithoutImage } from "src/services/firestore";
+import { firebase } from "src/firebase";
 
 interface LandingPageProps {}
 
 export const LandingPage: React.FC<LandingPageProps> = ({}) => {
   const router = useRouter();
-  const { data, loading } = useMeQuery({});
-  const [saveLandingPage] = useSaveLandingPageMutation();
-  const courseId = router.query.courseid;
 
-  const {
-    data: courseData,
-    error,
-    loading: courseLoading,
-    fetchMore,
-    variables,
-  } = useInstructorCourseLandingPageQuery({
-    variables: {
-      courseId: router.query.courseid as string,
-    },
-  });
+  const courseId = router.query.courseid;
+  const [course, setCourse] = React.useState<any>();
+
 
   useEffect(() => {
-    console.log(courseData);
-  }, [courseData]);
+    if (!router.isReady) return;
+    getCourse(courseId as string).then((docSnap) => {
+      if (docSnap.exists()) {
+        console.log("snapshot", docSnap);
+
+        setCourse(docSnap.data());
+        console.log("course data",docSnap.data());
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    });
+  }, [router.isReady]);
 
   return (
     <>
-      {typeof courseId === "string" && !loading ? (
+      {typeof courseId === "string" ? (
         <Box bg={"white"} overflowY={"scroll"} height="100vh">
           <InstructorNavigation />
           <Flex>
             <InstructorSidePanel
               selected="curriculum"
               courseid={courseId}
-              name={`${data?.me?.firstName} ${data?.me?.lastName}`}
+              name={firebase.auth().currentUser?.displayName as string}
             />
             <Box
               pos="sticky"
@@ -69,49 +65,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({}) => {
                 <Formik
                   enableReinitialize
                   initialValues={{
-                    title: courseData?.instructorCourse.title,
-                    description: courseData?.instructorCourse.description,
+                    title: course?.title,
+                    description: course?.description,
                     file: "",
                   }}
                   onSubmit={async (values, { setErrors }) => {
                     if (values.file) {
                       uploadImageToFirebase(values.file).then((url) => {
-                        saveLandingPage({
-                          variables: {
-                            title: values.title || "",
-                            description: values.description || "",
-                            promoImage: url,
-                            courseId: courseId,
-                          },
-                          optimisticResponse: {
-                            __typename: "Mutation",
-                            saveLandingPage: {
-                              __typename: "Course",
-                              id: courseId,
-                              title: values.title || "",
-                              description: values.description,
-                              promoImage: url,
-                            },
-                          },
-                          update: (cache, { data }) => {
-                            cache.evict({ fieldName: "instructorCourses" });
-                          },
-                        });
-
+                        saveCourseInfoWithImage(
+                          courseId,
+                          values.title,
+                          values.description,
+                          url,
+                        );
                         //upload image
                       });
                     } else {
-                      saveLandingPage({
-                        variables: {
-                          title: values.title || "",
-                          description: values.description || "",
-                          promoImage: courseData?.instructorCourse.promoImage || "",
-                          courseId: courseId,
-                        },
-                        update: (cache, { data }) => {
-                          cache.evict({ fieldName: "instructorCourses" });
-                        },
-                      });
+                      saveCourseInfoWithoutImage(courseId, values.title, values.description);
                     }
                   }}
                 >
@@ -131,7 +101,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({}) => {
                       <FileUpload
                         name="image"
                         label="image"
-                        promoImage={courseData?.instructorCourse.promoImage}
+                        promoImage={course?.imageUrl}
                       />
                       <Box mt={4}></Box>
                       <Button

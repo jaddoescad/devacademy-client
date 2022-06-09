@@ -2,11 +2,11 @@ import React, { useEffect } from "react";
 import { withApollo } from "../../../utils/withApollo";
 import { useRouter } from "next/router";
 import InstructorSidePanel from "src/components/common/instructorSidePanel";
-import { useMeQuery } from "src/generated/graphql";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import CourseCreateCurriculum from "src/components/course-creation-curriculum";
 import dynamic from "next/dynamic";
 import { InstructorNavigation } from "src/components/common/InstructorNavigation";
+import {firebase} from "src/firebase";
 
 interface CourseCurriculumPlatformProps {}
 
@@ -14,7 +14,6 @@ export const CourseCurriculum: React.FC<
   CourseCurriculumPlatformProps
 > = ({}) => {
   const router = useRouter();
-  const { data, loading } = useMeQuery({});
 
   return (
     <>
@@ -25,7 +24,7 @@ export const CourseCurriculum: React.FC<
             <InstructorSidePanel
               selected="curriculum"
               courseid={router.query.courseid}
-              name={`${data?.me?.firstName} ${data?.me?.lastName}`}
+              name={firebase.auth().currentUser?.displayName as string}
             />
             <Box
               pos="sticky"

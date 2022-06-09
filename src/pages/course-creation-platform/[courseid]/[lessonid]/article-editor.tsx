@@ -2,9 +2,9 @@ import { Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import CreateReactEditor from "src/components/react-editor";
-import { useSetArticleTextMutation } from "src/generated/graphql";
+// import { useSetArticleTextMutation } from "src/generated/graphql";
 import { withApollo } from "../../../../utils/withApollo";
-import { useGetLessonQuery } from "src/generated/graphql";
+// import { useGetLessonQuery } from "src/generated/graphql";
 
 interface ArticleEditorProps {}
 
@@ -13,21 +13,21 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({}) => {
   const [isActive, setIsActive] = useState(false);
   const [editorChange, setEditorChange] = useState("saved");
   const [value, setValue] = React.useState("");
-  const [setArticleText] = useSetArticleTextMutation();
+  // const [setArticleText] = useSetArticleTextMutation();
   const router = useRouter();
 
-  const { data, error, loading, fetchMore, variables } = useGetLessonQuery({
-    variables: {
-      lessonId:
-        typeof router.query.lessonid === "string" ? router.query.lessonid : "",
-    },
-  });
+  // const { data, error, loading, fetchMore, variables } = useGetLessonQuery({
+  //   variables: {
+  //     lessonId:
+  //       typeof router.query.lessonid === "string" ? router.query.lessonid : "",
+  //   },
+  // });
 
-  useEffect(() => {
-    if (data && data.lesson && data.lesson.articleText) {
-      setValue(data.lesson.articleText);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data && data.lesson && data.lesson.articleText) {
+  //     setValue(data.lesson.articleText);
+  //   }
+  // }, [data]);
 
   function reset() {
     setSeconds(0);
@@ -38,23 +38,23 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({}) => {
     setIsActive(false);
   }
 
-  const _setArticleText = async (articleid: string, value: string) => {
-    await setArticleText({
-      variables: {
-        lessonId: articleid,
-        articleText: value,
-      },
-      update: (cache) => {
-        cache.evict({ fieldName: "course" });
-      }
-    })
-      .then(() => {
-        setEditorChange("saved");
-      })
-      .catch(() => {
-        setEditorChange("error");
-      });
-  };
+  // const _setArticleText = async (articleid: string, value: string) => {
+  //   await setArticleText({
+  //     variables: {
+  //       lessonId: articleid,
+  //       articleText: value,
+  //     },
+  //     update: (cache) => {
+  //       cache.evict({ fieldName: "course" });
+  //     }
+  //   })
+  //     .then(() => {
+  //       setEditorChange("saved");
+  //     })
+  //     .catch(() => {
+  //       setEditorChange("error");
+  //     });
+  // };
 
   useEffect(() => {
     let interval;
@@ -68,7 +68,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({}) => {
             if (navigator.onLine) {
               setEditorChange("Saving...");
               toggle();
-              _setArticleText(router.query.lessonid, value);
+              // _setArticleText(router.query.lessonid, value);
             }
           }
         }

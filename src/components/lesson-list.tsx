@@ -5,7 +5,7 @@ import LessonItem from "./lesson-item";
 import { grid } from "./constants";
 import PopoverEditForm from "./titleInputForm";
 
-import { useInstructorCourseQuery } from "src/generated/graphql";
+// import { useInstructorCourseQuery } from "src/generated/graphql";
 import { Box, Text } from "@chakra-ui/react";
 import HoverToShowWrapper from "./HoverToShowWrapper";
 
@@ -24,32 +24,22 @@ const DraggableContainer = styled.div<StyledDivProps>`
 interface InnerLessonListProps {
   courseId: string;
   sectionId: string;
+  courseData: any;
 }
 
 const InnerLessonList: React.FC<InnerLessonListProps> = ({
   courseId,
   sectionId,
+  courseData,
   ...props
 }) => {
   const [keepFocus, setKeepFocus] = useState(false);
-  
-
-  const { data, error, loading, fetchMore, variables } =
-    useInstructorCourseQuery({
-      variables: {
-        courseId: courseId,
-      },
-    });
-
-  if (!data?.course?.sections?.find((x) => x.id === sectionId)?.lessonOrder) {
-    return <div>error</div>;
-  }
 
   return (
     <Box>
-      {data.course?.sections
-        ?.find((x) => x.id === sectionId)
-        ?.lessonOrder.map((lessonId, lessonIndex) => {
+      {courseData?.courseCurriculum?.sections?.[sectionId]?.lessonOrder?.map(
+        (lessonId, lessonIndex) => {
+          const lesson = courseData?.courseCurriculum?.articles?.[lessonId];
           return (
             <Draggable
               key={lessonId}
@@ -67,23 +57,27 @@ const InnerLessonList: React.FC<InnerLessonListProps> = ({
                     courseId={courseId}
                     isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
                     provided={dragProvided}
+                    lesson={lesson}
+                    courseData={courseData}
                     {...props}
                   />
                 </Box>
               )}
             </Draggable>
           );
-        })}
+        }
+      )}
       <HoverToShowWrapper keepFocus={keepFocus}>
         <Box height="50px">
           <Box>
             <PopoverEditForm
+              course={courseData}
               elementType="lesson"
               action="create"
               courseId={courseId}
               lessonIndex={
-                data.course?.sections?.find((x) => x.id === sectionId)
-                  ?.lessonOrder.length
+                courseData?.courseCurriculum.sections?.[sectionId]?.lessonOrder
+                  ?.length
               }
               sectionId={sectionId}
               setKeepFocus={setKeepFocus}
@@ -101,17 +95,19 @@ interface InnerListProps {
   title: string;
   courseId: string;
   sectionId: string;
+  courseData: any;
 }
 
 const InnerList: React.FC<InnerListProps> = ({
   dropProvided,
   title,
+  courseData,
   ...props
 }) => {
   return (
     <Box>
       <Box minH={scrollContainerHeight} pb={grid} ref={dropProvided.innerRef}>
-        <InnerLessonList {...props} />
+        <InnerLessonList courseData={courseData} {...props} />
         {dropProvided.placeholder}
       </Box>
     </Box>
@@ -126,6 +122,7 @@ interface LessonListProps {
   internalScroll: boolean;
   listType: string;
   isDropDisabled: boolean;
+  courseData: any;
 }
 
 const LessonList: React.FC<LessonListProps> = ({
@@ -136,6 +133,7 @@ const LessonList: React.FC<LessonListProps> = ({
   title,
   sectionId,
   courseId,
+  courseData,
 }) => {
   return (
     <Droppable
@@ -156,6 +154,7 @@ const LessonList: React.FC<LessonListProps> = ({
             sectionId={sectionId}
             courseId={courseId}
             title={title}
+            courseData={courseData}
             dropProvided={dropProvided}
           />
         </DraggableContainer>

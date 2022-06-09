@@ -20,6 +20,8 @@ import { connectWallet } from "../fixtures/wallet/utility";
 import { theme } from "../theme";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import FullMembershipContext, { fullMembership } from "src/context/fullMembershipContext";
+import {firebase} from "src/firebase";
+import AuthStateContext, { authState } from "src/context/authStateContext";
 
 const cache = new InMemoryCache();
 const client = new ApolloClient({
@@ -28,16 +30,25 @@ const client = new ApolloClient({
 });
 
 
-
+interface AuthStateType {
+  isCurrencyDEV: any,
+  web3: any,
+  ethersProvider: any,
+  web3Modal: any,
+  address: any,
+  fullMembership: any,
+  authState: 'loading' | 'loaded'
+}
 
 class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
-  state = {
+  state: AuthStateType = {
     isCurrencyDEV: true,
     web3: undefined,
     ethersProvider: undefined,
     web3Modal: undefined,
     address: undefined,
     fullMembership: false,
+    authState: 'loading',
   };
 
   getProviderOptions = () => {
@@ -112,6 +123,17 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
   };
 
   componentDidMount = () => {
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        this.setState({authState: 'loaded'});
+        // User is signed in.
+      } else {
+        // No user is signed in.
+        this.setState({authState: 'loaded'});
+      }
+      });
+
     this.web3Modal = new Web3Modal({
       cacheProvider: true,
       providerOptions: this.getProviderOptions(),
@@ -153,6 +175,9 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
     const { Component, pageProps, apollo } = this.props;
 
     return (
+      <AuthStateContext.Provider value={{
+        authState: this.state.authState,
+      }}>
       <FullMembershipContext.Provider
         value={{fullMembership: this.state.fullMembership, setFullMembership: this.updateFullMembership}}
       >
@@ -169,17 +194,17 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
         >
           <Head>
             <title>Stakes.social</title>
-            {/* Use minimum-scale=1 to enable GPU rasterization */}
             <meta
               name="viewport"
               content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
             />
           </Head>
-          <Component {...pageProps} /*apollo={apollo}*/ />
+          {  <Component {...pageProps}/> }
         </WalletContext.Provider>
       </ChakraProvider>
       </ApolloProvider>
       </FullMembershipContext.Provider>
+    </AuthStateContext.Provider>
     );
   }
 }

@@ -1,6 +1,0 @@
-mutation ChangeSectionOrder($sectionOrder: [String!]!, $courseId: String!) {
-  changeSectionOrder(sectionOrder: $sectionOrder, courseId: $courseId) {
-    id
-    sectionOrder
-  }
-}

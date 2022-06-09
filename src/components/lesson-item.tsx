@@ -4,10 +4,10 @@ import { colors } from "@atlaskit/theme";
 import { borderRadius, grid } from "./constants";
 import PopoverEditForm from "./titleInputForm";
 import { Box, Center, Flex, IconButton } from "@chakra-ui/react";
-import {
-  useInstructorCourseQuery,
-  useSetVideoUrlMutation,
-} from "src/generated/graphql";
+// import {
+//   useInstructorCourseQuery,
+//   useSetVideoUrlMutation,
+// } from "src/generated/graphql";
 import { Icon, Text, Button } from "@chakra-ui/react";
 import { FiEdit2, FiTrash, FiTrash2, FiMenu } from "react-icons/fi";
 import PopoverDeleteForm from "./deleteForm";
@@ -35,6 +35,8 @@ interface Props {
   isGroupedOver: boolean;
 
   lessonId: string;
+  lesson: any;
+  courseData: any;
 }
 
 const LessonItem: React.FC<Props> = ({
@@ -44,12 +46,14 @@ const LessonItem: React.FC<Props> = ({
   lessonIndex,
   sectionId,
   courseId,
+  lesson,
+  courseData
 }) => {
-  const { data } = useInstructorCourseQuery({
-    variables: {
-      courseId: courseId,
-    },
-  });
+  // const { data } = useInstructorCourseQuery({
+  //   variables: {
+  //     courseId: courseId,
+  //   },
+  // });
 
   const [showAddLessonItem, setShowLessonItem] = React.useState(false);
   const [showHeaderItem, setShowHeaderItem] = React.useState(false);
@@ -58,37 +62,36 @@ const LessonItem: React.FC<Props> = ({
   const [videoOrArticle, setVideoOrArticle] = React.useState(false);
   const [showExtension, setShowExtension] = React.useState(false);
   const [videoUrl, setVideoUrl] = useState("");
-  const [setVideoUrlMutation] = useSetVideoUrlMutation();
+  // const [setVideoUrlMutation] = useSetVideoUrlMutation();
   const router = useRouter();
   const [keepFocus, setKeepFocus] = React.useState(false);
   const [keepLessonFocus, setKeepLessonFocus] = React.useState(false);
 
-  setKeepLessonFocus
-  const lesson = data?.course?.sections
-    ?.find((x) => x.id === sectionId)
-    ?.lessons?.find((x) => x.id === lessonId);
+  useEffect(() => {
+    console.log("lesson", lesson);
+  }, [lesson]);
 
-  function deleteVideoPgsql() {
-    setVideoUrlMutation({
-      variables: {
-        lessonId: lessonId,
-        videoEmbedUrl: "",
-        videoUri: "",
-      },
-      optimisticResponse: {
-        __typename: "Mutation",
-        setVideoUrl: {
-          __typename: "Lesson",
-          id: lessonId,
-          videoEmbedUrl: "",
-          videoUri: "",
-        },
-      },
-      update: (cache) => {
-        cache.evict({ fieldName: "course" });
-      },
-    });
-  }
+  // function deleteVideoPgsql() {
+  //   setVideoUrlMutation({
+  //     variables: {
+  //       lessonId: lessonId,
+  //       videoEmbedUrl: "",
+  //       videoUri: "",
+  //     },
+  //     optimisticResponse: {
+  //       __typename: "Mutation",
+  //       setVideoUrl: {
+  //         __typename: "Lesson",
+  //         id: lessonId,
+  //         videoEmbedUrl: "",
+  //         videoUri: "",
+  //       },
+  //     },
+  //     update: (cache) => {
+  //       cache.evict({ fieldName: "course" });
+  //     },
+  //   });
+  // }
 
   return (
     <Box>
@@ -96,12 +99,14 @@ const LessonItem: React.FC<Props> = ({
         <Box>
           <HoverToShowWrapper keepLessonFocus={keepLessonFocus}>
             <PopoverEditForm
+              course={courseData}
               action="create"
               elementType="lesson"
               lessonIndex={lessonIndex}
               sectionId={sectionId}
               courseId={courseId}
-              setKeepLessonFocus={setKeepLessonFocus}
+              
+              setKeepFocus={setKeepLessonFocus}
             />
           </HoverToShowWrapper>
         </Box>
@@ -169,9 +174,9 @@ const LessonItem: React.FC<Props> = ({
                 onClick={async () => {
                   try {
                     await deleteVideo(lesson.videoUri);
-                    deleteVideoPgsql();
+                    // deleteVideoPgsql();
                   } catch (error) {
-                    deleteVideoPgsql();
+                    // deleteVideoPgsql();
                   }
                   // setVideoUrl(lesson.videoUrl);
                 }}

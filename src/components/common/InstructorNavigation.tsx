@@ -1,4 +1,4 @@
-import React, { ReactComponentElement, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -10,48 +10,24 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { useLogoutMutation, useMeQuery } from "src/generated/graphql";
-// import { isServer } from "src/utils/isServer";
-import { useApolloClient } from "@apollo/client";
+import { firebase, uiConfig } from "src/firebase";
+import AuthStateContext from "src/context/authStateContext";
 
 interface InstructorNavigationProps {}
 
 export const InstructorNavigation: React.FC<
   InstructorNavigationProps
 > = ({}) => {
-  const [logout, { loading: logoutFetching }] = useLogoutMutation();
-  const apolloClient = useApolloClient();
-
-  const { data, loading } = useMeQuery({
-    // skip: isServer(),
-  });
+  const { authState } = useContext(AuthStateContext);
 
   var body;
 
-  // data is loading
-  if (loading) {
-    // user not logged in
-    body = (
-      <Box>
-        <Box mr={2}>
-          <NextLink href="/login">login</NextLink>
-        </Box>
-        <NextLink href="/register">register</NextLink>
-      </Box>
-    );
-  } else if (!data?.me) {
-    body = (
-      <Box>
-        <Flex>
-          <Box mr={2}>
-            <NextLink href="/login">login</NextLink>
-          </Box>
-          <NextLink href="/register">register</NextLink>
-        </Flex>
-      </Box>
-    );
-    // user is logged in
-  } else {
+  useEffect(() => {
+    console.log("checking", authState);
+    console.log(firebase.auth().currentUser);
+  }, [authState]);
+
+  if (authState === "loaded" && firebase.auth().currentUser) {
     body = (
       <Box>
         <Flex alignItems="center">
@@ -61,20 +37,19 @@ export const InstructorNavigation: React.FC<
           <Menu>
             <MenuButton>
               <Avatar
-                name={data.me.firstName + " " + data.me.lastName}
+                name={firebase.auth().currentUser?.displayName as string}
               />
             </MenuButton>
             <MenuList color="black">
               <MenuItem>
                 <Flex flexDirection={"column"}>
-                  <Box>{data.me.firstName + " " + data.me.lastName}</Box>
-                  <Box fontSize={"12"}>{data.me.email}</Box>
+                  <Box>{firebase.auth().currentUser?.displayName}</Box>
+                  <Box fontSize={"12"}>{firebase.auth().currentUser?.email}</Box>
                 </Flex>
               </MenuItem>
               <MenuItem
                 onClick={async () => {
-                  await logout();
-                  await apolloClient.resetStore();
+                  await firebase.auth().signOut();
                 }}
               >
                 logout
@@ -83,6 +58,16 @@ export const InstructorNavigation: React.FC<
             </MenuList>
           </Menu>
         </Flex>
+      </Box>
+    );
+  } else {
+    // user not logged in
+    body = (
+      <Box>
+        <Box mr={2}>
+          <NextLink href="/login">login</NextLink>
+        </Box>
+        <NextLink href="/register">register</NextLink>
       </Box>
     );
   }

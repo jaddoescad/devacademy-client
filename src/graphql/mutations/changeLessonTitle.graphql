@@ -1,6 +1,0 @@
-mutation ChangeLessonTitle($title: String!, $lessonId: String!) {
-  changeLessonTitle(title: $title, lessonId: $lessonId) {
-    id
-    title
-  }
-}

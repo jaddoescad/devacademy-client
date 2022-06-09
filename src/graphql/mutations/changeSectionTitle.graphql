@@ -1,6 +1,0 @@
-mutation ChangeSectionTitle($title: String!, $sectionId: String!) {
-  changeSectionTitle(title: $title, sectionId: $sectionId) {
-    id
-    title
-  }
-}

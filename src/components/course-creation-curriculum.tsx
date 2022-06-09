@@ -3,53 +3,45 @@ import Section from "./section";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { Box, Text } from "@chakra-ui/react";
 import PopoverEditForm from "./titleInputForm";
-import {
-  useInstructorCourseQuery,
-  useChangeSectionOrderMutation,
-  useChangeLessonOrderSameSectionMutation,
-  useChangeLessonOrderDifferentSectionMutation,
-} from "src/generated/graphql";
 import HoverToShowWrapper from "./HoverToShowWrapper";
-
 import {
   reorderSectionService,
   reorderLessonService,
 } from "src/services/courseCurriculum";
+import {
+  getCourse,
+  getInstructorCourseCurriculumObserver,
+} from "src/services/firestore";
+import { useRouter } from "next/router";
 
 interface Props {
   courseId: string;
 }
 
 const Board: React.FC<Props> = ({ courseId, ...props }) => {
-  const [changeSection] = useChangeSectionOrderMutation();
-  const [changeLessonOrderSameSection] =
-    useChangeLessonOrderSameSectionMutation();
-  const [changeLessonOrderDifferentSection] =
-    useChangeLessonOrderDifferentSectionMutation();
+  const router = useRouter();
 
   const [keepFocus, setKeepFocus] = React.useState(false);
-
-
-
-  const {
-    data: courseData,
-    error,
-    loading,
-    fetchMore,
-    variables,
-  } = useInstructorCourseQuery({
-    variables: {
-      courseId: courseId,
-    },
-  });
+  const [course, setCourse] = React.useState<any>();
 
   useEffect(() => {
-    console.log("courseData", courseData?.course);
-  }, [courseData]);
+    if (!router.isReady) return;
+    const unsub = getInstructorCourseCurriculumObserver(
+      courseId as string,
+      setCourse
+    );
 
-  
+    return () => {
+      unsub();
+    };
+  }, [router.isReady]);
+
+  useEffect(() => {
+    console.log("course", course);
+  }, [course]);
+
   const onDragEnd = (result: any) => {
-    if (courseData) {
+    if (course) {
       // dropped nowhere
       if (!result.destination) {
         return;
@@ -69,22 +61,15 @@ const Board: React.FC<Props> = ({ courseId, ...props }) => {
       // reordering section
       if (result.type === "SECTION") {
         reorderSectionService(
-          courseData,
+          course,
           source.index,
           destination.index,
-          changeSection,
           courseId
         );
         return;
       } else {
         // reordering lesson
-        reorderLessonService(
-          courseData,
-          source,
-          destination,
-          changeLessonOrderSameSection,
-          changeLessonOrderDifferentSection
-        );
+        reorderLessonService(course, source, destination, courseId);
       }
     }
   };
@@ -105,19 +90,18 @@ const Board: React.FC<Props> = ({ courseId, ...props }) => {
           <Text mr="5" mt="5" fontSize={"30px"}>
             Course Curriculums
           </Text>
-
-          {courseData?.course?.sectionOrder.map((key, index) => {
+          {console.log(course)}
+          {course?.courseCurriculum?.sectionOrder?.map((key, index) => {
             return (
               <Box mt="3" key={key}>
                 <Section
                   key={key}
                   sectionIndex={index}
                   title={
-                    courseData?.course?.sections?.find((x) => x.id === key)
-                      ?.title || ""
+                    course?.courseCurriculum?.sections?.[key].title || "error: title does not exist"
                   }
                   sectionId={key}
-                  courseData={courseData}
+                  courseData={course}
                   courseId={courseId}
                 />
               </Box>
@@ -126,13 +110,16 @@ const Board: React.FC<Props> = ({ courseId, ...props }) => {
           <Box mt="3">
             <Box height="50px">
               <Box width="100%">
-                <HoverToShowWrapper
-                  keepFocus={keepFocus}
-                >
+                <HoverToShowWrapper keepFocus={keepFocus}>
                   <PopoverEditForm
                     {...props}
-                    courseData={courseData}
-                    sectionIndex={courseData?.course?.sectionOrder.length ? courseData?.course?.sectionOrder.length : 0}
+                    course={course}
+                    courseData={course}
+                    sectionIndex={
+                      course?.sectionOrder?.length
+                        ? course.course?.sectionOrder?.length
+                        : 0
+                    }
                     elementType="section"
                     action="create"
                     courseId={courseId}

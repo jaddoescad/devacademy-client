@@ -14,7 +14,7 @@ import {
   WrapItem,
 } from "@chakra-ui/react";
 import Navigation from "src/components/common/Navigation";
-import { usePaginatedCoursesQuery } from "src/generated/graphql";
+// import { usePaginatedCoursesQuery } from "src/generated/graphql";
 import { withApollo } from "../utils/withApollo";
 import NextLink from "next/link";
 import { capitalize } from "src/utils/capitalize";
@@ -22,15 +22,15 @@ import { capitalize } from "src/utils/capitalize";
 const Post = () => {
   const router = useRouter();
   const limit = 3;
-  const { data, error, loading, fetchMore, variables } =
-    usePaginatedCoursesQuery({
-      variables: {
-        limit: limit,
-        offset: router.query.p
-          ? (parseInt(router.query.p as string) - 1) * limit
-          : 0 * limit,
-      },
-    });
+  // const { data, error, loading, fetchMore, variables } =
+  //   usePaginatedCoursesQuery({
+  //     variables: {
+  //       limit: limit,
+  //       offset: router.query.p
+  //         ? (parseInt(router.query.p as string) - 1) * limit
+  //         : 0 * limit,
+  //     },
+  //   });
 
   const handlePageClick = (pageNumber: number) => {
     console.log(pageNumber);
@@ -42,14 +42,14 @@ const Post = () => {
     });
   };
 
-  if (!loading && !data) {
-    return (
-      <div>
-        <div>you got query failed for some reason</div>
-        <div>{error?.message}</div>
-      </div>
-    );
-  }
+  // if (!loading && !data) {
+  //   return (
+  //     <div>
+  //       <div>you got query failed for some reason</div>
+  //       <div>{error?.message}</div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <Box
@@ -60,18 +60,15 @@ const Post = () => {
       w="100%"
     >
       <Navigation />
-      {!data?.courses ? (
-        <div>loading...</div>
-      ) : (
-        <Flex flex="1" flexDir={"column"} align="center">
-          <Box pl={5} pr={5} height={"100%"} width="100%" maxWidth={"1200px"}>
-            <Box mb="4" mt="4">
-              <Text fontSize={"3xl"} fontWeight={"bold"}>
-                Discover Awesome Courses
-              </Text>
-            </Box>
+      <Flex flex="1" flexDir={"column"} align="center">
+        <Box pl={5} pr={5} height={"100%"} width="100%" maxWidth={"1200px"}>
+          <Box mb="4" mt="4">
+            <Text fontSize={"3xl"} fontWeight={"bold"}>
+              Discover Awesome Courses
+            </Text>
+          </Box>
 
-            {data.courses.courses.map((course) => (
+          {/* {data.courses.courses.map((course) => (
               <Box
                 key={course.id}
                 bg="white"
@@ -131,9 +128,9 @@ const Post = () => {
                   backgroundColor={"gray"}
                 ></Box>
               </Box>
-            ))}
-            <Box>
-              <Pagination
+            ))}*/}
+          <Box>
+            {/* <Pagination
                 total={data.courses.count}
                 pageSize={variables!.limit}
                 value={router.query.p ? parseInt(router.query.p as string) : 1}
@@ -145,11 +142,10 @@ const Post = () => {
                     : true
                 }
                 hasPreviousPage={true}
-              />
-            </Box>
+              /> */}
           </Box>
-        </Flex>
-      )}
+        </Box>
+      </Flex>
     </Box>
   );
 };

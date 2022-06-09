@@ -7,12 +7,13 @@ import { InputField } from "src/components/InputField";
 import { Wrapper } from "src/components/Wrapper";
 import { useIsAuth } from "src/utils/useIsAuth";
 import { withApollo } from "../utils/withApollo";
+import { createCourse } from "src/services/firestore";
+import {firebase} from "src/firebase";
 
 interface CreateCourseProps {}
 
 export const CreateCourse: React.FC<CreateCourseProps> = ({}) => {
   const router = useRouter();
-  useIsAuth()
 
   return (
     <>
@@ -30,14 +31,17 @@ export const CreateCourse: React.FC<CreateCourseProps> = ({}) => {
                 courseTitle: "Title can't be empty",
               });
             } else {
-              router.push(
-                {
-                  pathname: "/create-course-category",
-                  query: { title: values.courseTitle },
-                },
-                "/choose-category",
-                { shallow: true }
-              );
+              createCourse(values.courseTitle, firebase.auth().currentUser?.uid)
+                .then((docRef) => {
+                  router.push({
+                    pathname: "/instructor",
+                    query: { title: values.courseTitle },
+                  });
+                  console.log("Document written with ID: ", docRef.id);
+                })
+                .catch((error) => {
+                  console.error("Error adding document: ", error);
+                });
             }
           }}
         >

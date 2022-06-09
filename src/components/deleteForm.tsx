@@ -1,9 +1,9 @@
 // import  FocusLock from "react-focus-lock"
 import { EditIcon } from "@chakra-ui/icons";
-import {
-  useDeleteSectionMutation,
-  useDeleteLessonMutation,
-} from "src/generated/graphql";
+// import {
+//   useDeleteSectionMutation,
+//   useDeleteLessonMutation,
+// } from "src/generated/graphql";
 import {
   Box,
   Button,
@@ -39,8 +39,8 @@ const Form: React.FC<Props> = ({
   lessonId,
   courseId,
 }) => {
-  const [deleteSection] = useDeleteSectionMutation();
-  const [deleteLesson] = useDeleteLessonMutation();
+  // const [deleteSection] = useDeleteSectionMutation();
+  // const [deleteLesson] = useDeleteLessonMutation();
 
   return (
     <Box p={4}>
@@ -55,29 +55,29 @@ const Form: React.FC<Props> = ({
             colorScheme="red"
             onClick={async () => {
               if (elementType === "lesson") {
-                await deleteLesson({
-                  variables: {
-                    lessonId: lessonId,
-                    sectionId: sectionId,
-                  },
-                  update: (cache, { data }) => {
-                    cache.evict({
-                      fieldName: "course",
-                    });
-                  },
-                });
+                // await deleteLesson({
+                //   variables: {
+                //     lessonId: lessonId,
+                //     sectionId: sectionId,
+                //   },
+                //   update: (cache, { data }) => {
+                //     cache.evict({
+                //       fieldName: "course",
+                //     });
+                //   },
+                // });
               } else if (elementType === "section") {
-                await deleteSection({
-                  variables: {
-                    deleteSectionId: sectionId,
-                    courseId: courseId,
-                  },
-                  update: (cache, { data }) => {
-                    cache.evict({
-                      fieldName: "course",
-                    });
-                  },
-                });
+                // await deleteSection({
+                //   variables: {
+                //     deleteSectionId: sectionId,
+                //     courseId: courseId,
+                //   },
+                //   update: (cache, { data }) => {
+                //     cache.evict({
+                //       fieldName: "course",
+                //     });
+                //   },
+                // });
               }
             }}
           >

@@ -1,8 +1,0 @@
-mutation SaveLandingPage($promoImage: String!, $description: String!, $title: String!, $courseId: String!) {
-  saveLandingPage(promoImage: $promoImage, description: $description, title: $title, courseId: $courseId) {
-    promoImage
-    id
-    title
-    description
-  }
-}

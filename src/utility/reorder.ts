@@ -1,4 +1,4 @@
-import { InstructorCourseQuery } from 'src/generated/graphql';
+// import { InstructorCourseQuery } from 'src/generated/graphql';
 import { LessonOrder } from 'src/types/lesson';
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -12,18 +12,14 @@ const reorder = (list, startIndex, endIndex) => {
 export default reorder;
 
 export const reorderLessonMap = (
-  courseData: InstructorCourseQuery,
+  courseData,
   source: any,
   destination: any
 ): LessonOrder => {
-  const sections = courseData?.course?.sections;
-  const sectionSource = courseData?.course?.sections?.find(
-    (x) => x.id === source.droppableId
-  );
+  const sections = courseData?.courseCurriculum?.sections;
+  const sectionSource = sections?.[source.droppableId];
 
-  const sectionDestination = courseData?.course?.sections?.find(
-    (x) => x.id === destination.droppableId
-  );
+  const sectionDestination = sections?.[destination.droppableId];
 
   if (sectionSource && sectionDestination && sections) {
     const current = [...sectionSource.lessonOrder];
@@ -49,7 +45,6 @@ export const reorderLessonMap = (
       //     },
       //   },
       // };
-
       return {
         lessonOrder: [...reordered],
         sectionId: sectionDestination?.id,
@@ -64,10 +59,10 @@ export const reorderLessonMap = (
     // insert into next
     next.splice(destination.index, 0, target);
 
-    const lessons = sections.find((x) => x.id === source.droppableId)?.lessons;
-    const lesson = lessons?.find((x) => x.id === target);
+    const lessons = sections?.[source.droppableId]?.lessons;
+    const lesson = lessons?.[target];
 
-    const nextLessons = sections.find((x) => x.id === destination.droppableId)?.lessons;
+    const nextLessons = sections?.[destination.droppableId]?.lessons;
 
 
     return {

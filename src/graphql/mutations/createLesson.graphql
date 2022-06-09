@@ -1,3 +1,0 @@
-mutation CreateLesson($lessonOrder: [String!]!, $lessonId: String!, $sectionId: String!, $title: String!) {
-  createLesson(lessonOrder: $lessonOrder, lessonId: $lessonId, sectionId: $sectionId, title: $title)
-}

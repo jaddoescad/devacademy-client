@@ -1,9 +1,9 @@
 import { Box, Flex } from "@chakra-ui/react";
 import React, { useContext, useEffect } from "react";
-import {
-  useGetPublishedCourseQuery,
-  useGetLessonContentLazyQuery,
-} from "src/generated/graphql";
+// import {
+//   useGetPublishedCourseQuery,
+//   useGetLessonContentLazyQuery,
+// } from "src/generated/graphql";
 import { useRouter } from "next/router";
 import { propertySymbol } from "src/fixtures/dev-kit/client";
 import {
@@ -29,19 +29,19 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
   const { accountAddress, ethersProvider } = useProvider();
   const { address } = useContext(WalletContext);
 
-  const { data, error, loading, fetchMore, variables } =
-    useGetPublishedCourseQuery({
-      variables: {
-        getPublishedCourseId: courseId,
-      },
-    });
 
-  const [getLessonContent, { data: lessonData, loading: lessonLoading }] =
-    useGetLessonContentLazyQuery();
+  
+  // const { data, error, loading, fetchMore, variables } =
+    // useGetPublishedCourseQuery({
+    //   variables: {
+    //     getPublishedCourseId: courseId,
+    //   },
+    // });
 
-  useEffect(() => {
-    console.log(lessonData?.lesson);
-  }, [lessonData]);
+  // const [getLessonContent, { data: lessonData, loading: lessonLoading }] =
+    // useGetLessonContentLazyQuery();
+
+
 
   useEffect(() => {
     const firstSectionId = data?.getPublishedCourse?.sectionOrder[0];

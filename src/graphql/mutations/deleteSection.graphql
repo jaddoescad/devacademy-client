@@ -1,3 +1,0 @@
-mutation DeleteSection($courseId: String!, $deleteSectionId: String!) {
-  deleteSection(courseId: $courseId, id: $deleteSectionId)
-}
