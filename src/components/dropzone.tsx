@@ -2,13 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { uploadVideo } from "src/services/uploadVideo";
 import { Progress } from "@chakra-ui/react";
-// import { useSetVideoUrlMutation } from "src/generated/graphql";
+import { saveVideo } from "src/services/firestore";
 
-interface Props {
-  lessonId: string;
-}
-
-const MyDropzone: React.FC<Props> = ({ lessonId }) => {
+const MyDropzone = ({ lessonId, courseId }) => {
   const [title, setTitle] = React.useState("");
   const [progress, setProgress] = useState(0);
   const [finished, setFinished] = useState(false);
@@ -17,8 +13,6 @@ const MyDropzone: React.FC<Props> = ({ lessonId }) => {
     videoEmbedUrl: "",
     videoURI: "",
   });
-
-  // const [setVideoUrlMutation] = useSetVideoUrlMutation();
 
   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.forEach((file: File) => {
@@ -51,27 +45,15 @@ const MyDropzone: React.FC<Props> = ({ lessonId }) => {
       videoData.videoEmbedUrl &&
       videoData.videoURI
     ) {
-      // setVideoUrlMutation({
-      //   variables: {
-      //     lessonId: lessonId,
-      //     videoEmbedUrl: videoData.videoEmbedUrl,
-      //     videoUri: videoData.videoURI,
-      //   },
-      //   optimisticResponse: {
-      //     __typename: "Mutation",
-      //     setVideoUrl: {
-      //       __typename: "Lesson",
-      //       id: lessonId,
-      //       videoEmbedUrl: videoData.videoEmbedUrl,
-      //       videoUri: videoData.videoURI,
-      //     },
-      //   },
-      //   update: (cache) => {
-      //     cache.evict({ fieldName: "course" });
-      //   },
-      // });
+      saveVideo(
+        lessonId,
+        courseId,
+        videoData.videoURI,
+        videoData.videoEmbedUrl
+      );
     }
   }, [videoData]);
+
   return (
     <div
       style={{

@@ -1,9 +1,4 @@
-// import  FocusLock from "react-focus-lock"
 import { EditIcon } from "@chakra-ui/icons";
-// import {
-//   useDeleteSectionMutation,
-//   useDeleteLessonMutation,
-// } from "src/generated/graphql";
 import {
   Box,
   Button,
@@ -20,8 +15,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import FocusLock from "react-focus-lock";
+import { deleteSection, deleteLesson } from "src/services/firestore";
 import { withApollo } from "src/utils/withApollo";
-
 
 interface Props {
   onCancel: () => void;
@@ -29,6 +24,7 @@ interface Props {
   sectionId: string;
   lessonId: string;
   courseId: string;
+  courseData?: any;
 }
 
 // 2. Create the form
@@ -38,9 +34,9 @@ const Form: React.FC<Props> = ({
   sectionId,
   lessonId,
   courseId,
+  courseData
 }) => {
-  // const [deleteSection] = useDeleteSectionMutation();
-  // const [deleteLesson] = useDeleteLessonMutation();
+
 
   return (
     <Box p={4}>
@@ -55,29 +51,11 @@ const Form: React.FC<Props> = ({
             colorScheme="red"
             onClick={async () => {
               if (elementType === "lesson") {
-                // await deleteLesson({
-                //   variables: {
-                //     lessonId: lessonId,
-                //     sectionId: sectionId,
-                //   },
-                //   update: (cache, { data }) => {
-                //     cache.evict({
-                //       fieldName: "course",
-                //     });
-                //   },
-                // });
+                deleteLesson(lessonId, sectionId, courseId, courseData)
+
               } else if (elementType === "section") {
-                // await deleteSection({
-                //   variables: {
-                //     deleteSectionId: sectionId,
-                //     courseId: courseId,
-                //   },
-                //   update: (cache, { data }) => {
-                //     cache.evict({
-                //       fieldName: "course",
-                //     });
-                //   },
-                // });
+                deleteSection(sectionId, courseId, courseData);
+
               }
             }}
           >
@@ -90,7 +68,7 @@ const Form: React.FC<Props> = ({
 };
 
 interface PopOverEditProps {
-  courseData: any;
+  courseData?: any;
   actionComponent:
     | React.ReactElement<any, string | React.JSXElementConstructor<any>>
     | undefined;
@@ -110,6 +88,7 @@ const PopoverEditForm: React.FC<PopOverEditProps> = ({
   courseId,
   lessonId,
   setKeepFocus,
+  courseData
 }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = React.useRef(null);
@@ -120,7 +99,7 @@ const PopoverEditForm: React.FC<PopOverEditProps> = ({
         isOpen={isOpen}
         initialFocusRef={firstFieldRef}
         onOpen={() => {
-          setKeepFocus(true)
+          setKeepFocus(true);
           onOpen();
         }}
         onClose={() => {
@@ -146,6 +125,7 @@ const PopoverEditForm: React.FC<PopOverEditProps> = ({
               sectionId={sectionId}
               lessonId={lessonId}
               courseId={courseId}
+              courseData={courseData}
               onCancel={() => {
                 setKeepFocus(false);
                 onClose();

@@ -3,10 +3,6 @@ import { Draggable } from "react-beautiful-dnd";
 import LessonList from "./lesson-list";
 import { Box, Button, Flex, Text, IconButton } from "@chakra-ui/react";
 import PopoverEditForm from "./titleInputForm";
-// import {
-//   useChangeSectionTitleMutation,
-//   useInstructorCourseQuery,
-// } from "src/generated/graphql";
 import { FiEdit2, FiTrash, FiTrash2, FiMenu } from "react-icons/fi";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { Icon } from "@chakra-ui/react";
@@ -31,6 +27,10 @@ const Section: React.FC<Props> = ({
 }) => {
   const [keepFocus, setKeepFocus] = React.useState(false);
   const [keepFocus2, setKeepFocus2] = React.useState(false);
+
+  useEffect(() => {
+    console.log("courseData", courseData)
+  }, [courseData])
 
 
   return (
@@ -90,6 +90,7 @@ const Section: React.FC<Props> = ({
                           sectionId={sectionId}
                           actionComponent={<FiTrash />}
                           setKeepFocus={setKeepFocus}
+                          courseData={courseData}
                         />
                       </Flex>
                     </Flex>

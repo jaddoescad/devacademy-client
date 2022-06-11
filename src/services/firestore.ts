@@ -9,6 +9,9 @@ import {
   getDoc,
   updateDoc,
   onSnapshot,
+  deleteDoc,
+  deleteField,
+  arrayRemove,
 } from "firebase/firestore";
 import { db } from "src/firebase";
 
@@ -170,15 +173,11 @@ export const changeLessonOrderSameSection = (
 ) => {
   const courseRef = doc(db, "instructorCourses", courseId);
 
-  console.log(
-    "changeLessonOrderSameSection",
-  )
+  console.log("changeLessonOrderSameSection");
   console.log(lessonOrder);
   console.log(sectionId);
   console.log(courseId);
-  console.log(
-    "changeLessonOrderSameSection",
-  )
+  console.log("changeLessonOrderSameSection");
   return setDoc(
     courseRef,
     {
@@ -225,6 +224,25 @@ export const changeLessonOrderDifferentSection = (
   );
 };
 
+export const saveVideo = (lessonId, courseId, videoUrl, videoEmbedUrl) => {
+  const lessonRef = doc(db, "instructorCourses", courseId);
+  return setDoc(
+    lessonRef,
+    {
+      courseCurriculum: {
+        articles: {
+          [lessonId]: {
+            videoUrl,
+            videoEmbedUrl,
+            updatedAt: new Date(),
+          },
+        },
+      },
+    },
+    { merge: true }
+  );
+};
+
 //read data
 export const getInstructorCourses = async (uid) => {
   const q = query(collection(db, "instructorCourses"), where("uid", "==", uid));
@@ -251,4 +269,65 @@ export const getInstructorCourseCurriculumObserver = (courseId, setCourse) => {
   );
 
   // return unsub;
+};
+
+//delete data
+export const deleteSection = (sectionId, courseId, courseData) => {
+  const courseRef = doc(db, "instructorCourses", courseId);
+  const sectionOrder = courseData.courseCurriculum.sectionOrder;
+  var index = sectionOrder.indexOf(sectionId);
+  if (index !== -1) {
+    sectionOrder.splice(index, 1);
+  }
+
+  return setDoc(
+    courseRef,
+    {
+      courseCurriculum: {
+        sectionOrder: sectionOrder,
+      },
+    },
+    { merge: true }
+  );
+};
+
+export const deleteLesson = (lessonId, sectionId, courseId, courseData) => {
+  const courseRef = doc(db, "instructorCourses", courseId);
+  const lessonOrder =
+    courseData.courseCurriculum.sections[sectionId].lessonOrder;
+  var index = lessonOrder.indexOf(lessonId);
+  if (index !== -1) {
+    lessonOrder.splice(index, 1);
+  }
+
+  return setDoc(
+    courseRef,
+    {
+      courseCurriculum: {
+        sections: {
+          [sectionId]: {
+            lessonOrder: lessonOrder,
+            updatedAt: new Date(),
+          },
+        },
+      },
+    },
+    { merge: true }
+  );
+};
+
+export const deleteVideoUrl = (lessonId,  courseId) => {
+  const courseRef = doc(db, "instructorCourses", courseId);
+
+  return setDoc(courseRef, {
+    courseCurriculum: {
+      articles: {
+        [lessonId]: {
+          videoUrl: null,
+          videoEmbedUrl: null,
+          updatedAt: new Date(),
+        },
+      },
+    },
+  }, { merge: true });
 };

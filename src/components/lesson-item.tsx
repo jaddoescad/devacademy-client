@@ -17,6 +17,7 @@ import VideoLessonCreationItem from "./video-lesson-creation-item";
 import { useRouter } from "next/router";
 import { ArticleSubHeader } from "./article-subheader";
 import { deleteVideo } from "src/services/deleteVideo";
+import {deleteVideoUrl} from "src/services/firestore";
 import HoverToShowWrapper from "./HoverToShowWrapper";
 
 // Previously this extended React.Component
@@ -47,7 +48,7 @@ const LessonItem: React.FC<Props> = ({
   sectionId,
   courseId,
   lesson,
-  courseData
+  courseData,
 }) => {
   // const { data } = useInstructorCourseQuery({
   //   variables: {
@@ -71,28 +72,6 @@ const LessonItem: React.FC<Props> = ({
     console.log("lesson", lesson);
   }, [lesson]);
 
-  // function deleteVideoPgsql() {
-  //   setVideoUrlMutation({
-  //     variables: {
-  //       lessonId: lessonId,
-  //       videoEmbedUrl: "",
-  //       videoUri: "",
-  //     },
-  //     optimisticResponse: {
-  //       __typename: "Mutation",
-  //       setVideoUrl: {
-  //         __typename: "Lesson",
-  //         id: lessonId,
-  //         videoEmbedUrl: "",
-  //         videoUri: "",
-  //       },
-  //     },
-  //     update: (cache) => {
-  //       cache.evict({ fieldName: "course" });
-  //     },
-  //   });
-  // }
-
   return (
     <Box>
       <Box width={"100%"} h="40px">
@@ -105,7 +84,6 @@ const LessonItem: React.FC<Props> = ({
               lessonIndex={lessonIndex}
               sectionId={sectionId}
               courseId={courseId}
-              
               setKeepFocus={setKeepLessonFocus}
             />
           </HoverToShowWrapper>
@@ -141,8 +119,10 @@ const LessonItem: React.FC<Props> = ({
                     elementType="lesson"
                     sectionId={sectionId}
                     lessonId={lessonId}
+                    courseId={courseId}
                     setKeepFocus={setKeepFocus}
                     actionComponent={<FiTrash />}
+                    courseData={courseData}
                   />
                 </Flex>
               </HoverToShowWrapper>
@@ -168,13 +148,13 @@ const LessonItem: React.FC<Props> = ({
               )}
             </Flex>
           }
-          {lesson?.videoEmbedUrl && lesson?.videoEmbedUrl !== "" ? (
+          {lesson?.videoEmbedUrl && lesson?.videoEmbedUrl !== "" && lesson.videoUrl && lesson.videoUrl !== "" ? (
             <>
               <Button
                 onClick={async () => {
                   try {
-                    await deleteVideo(lesson.videoUri);
-                    // deleteVideoPgsql();
+                    await deleteVideo(lesson.videoUrl);
+                    deleteVideoUrl(lessonId, courseId);
                   } catch (error) {
                     // deleteVideoPgsql();
                   }
@@ -238,7 +218,7 @@ const LessonItem: React.FC<Props> = ({
                   )}
                   {uploadVideo && (
                     <Box>
-                      <MyDropzone lessonId={lessonId} />
+                      <MyDropzone lessonId={lessonId} courseId={courseId} />
                     </Box>
                   )}
                   {createArticle && <Box>Create Article</Box>}

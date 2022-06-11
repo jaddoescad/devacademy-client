@@ -1,5 +1,5 @@
 // import { InstructorCourseQuery } from 'src/generated/graphql';
-import { LessonOrder } from 'src/types/lesson';
+import { LessonOrder } from "src/types/lesson";
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -17,13 +17,17 @@ export const reorderLessonMap = (
   destination: any
 ): LessonOrder => {
   const sections = courseData?.courseCurriculum?.sections;
-  const sectionSource = sections?.[source.droppableId];
 
+  const sectionSource = sections?.[source.droppableId];
   const sectionDestination = sections?.[destination.droppableId];
 
   if (sectionSource && sectionDestination && sections) {
-    const current = [...sectionSource.lessonOrder];
-    const next = [...sectionDestination.lessonOrder];
+    const current = sectionSource?.lessonOrder
+      ? [...sectionSource?.lessonOrder]
+      : [];
+    const next = sectionDestination?.lessonOrder
+      ? [...sectionDestination?.lessonOrder]
+      : [];
     const target = current[source.index];
     const targetDestination = next[destination.index];
 
@@ -48,7 +52,7 @@ export const reorderLessonMap = (
       return {
         lessonOrder: [...reordered],
         sectionId: sectionDestination?.id,
-        type: 'same-section',
+        type: "same-section",
       };
     }
 
@@ -64,7 +68,6 @@ export const reorderLessonMap = (
 
     const nextLessons = sections?.[destination.droppableId]?.lessons;
 
-
     return {
       nextLessonOrder: [...next],
       currentLessonOrder: [...current],
@@ -74,11 +77,11 @@ export const reorderLessonMap = (
       nextLessonId: targetDestination,
       lesson: lesson,
       nextLessons: nextLessons,
-      type: 'different-section',
+      type: "different-section",
     };
   }
 
   return {
-    type: 'no-change',
+    type: "no-change",
   };
 };

@@ -20,13 +20,6 @@ import {
 } from "@chakra-ui/react";
 import React, { HTMLInputTypeAttribute, useEffect, useRef } from "react";
 import FocusLock from "react-focus-lock";
-// import {
-//   useInstructorCourseQuery,
-//   useCreateSectionMutation,
-//   useCreateLessonMutation,
-//   useChangeSectionTitleMutation,
-//   useChangeLessonTitleMutation,
-// } from "src/generated/graphql";
 import { withApollo } from "src/utils/withApollo";
 import {
   createSectionService,
@@ -68,17 +61,6 @@ const Form = ({
   course,
   ...props
 }) => {
-  // const [createSectionMutation] = useCreateSectionMutation();
-  // const [createLesson] = useCreateLessonMutation();
-  // const [changeSectionTitle] = useChangeSectionTitleMutation();
-  // const [changeLessonTitle] = useChangeLessonTitleMutation();
-
-  // const { data, error, loading, fetchMore, variables } =
-  //   useInstructorCourseQuery({
-  //     variables: {
-  //       courseId: courseId,
-  //     },
-  //   });
 
   return (
     <Box p={4}>

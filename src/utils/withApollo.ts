@@ -26,48 +26,7 @@ const createClient = (ctx: NextPageContext) =>
           },
         },
       },
-      //   typePolicies: {
-      //     Query: {
-      //       fields: {
-      //           courses: offsetLimitPagination()
-      //         posts: {
-      //           keyArgs: [],
-      //           merge(
-      //             existing: PaginatedPosts | undefined,
-      //             incoming: PaginatedPosts
-      //           ): PaginatedPosts {
-      //             return {
-      //               ...incoming,
-      //               posts: [...(existing?.posts || []), ...incoming.posts],
-      //             };
-      //           },
-      //         },
-      //   },
-      // },
-      //   },
     }),
   });
 
 export const withApollo = createWithApollo(createClient);
-
-// const cache = new InMemoryCache({
-//   typePolicies: {
-//     Query: {
-//       fields: {
-//         YOUR_FIELD: {
-//           // shorthand
-//           merge: true,
-//         },
-//       },
-//     },
-//   },
-// });
-
-// const devProtocolCache = new InMemoryCache()
-// const createDevProtocolClient = (ctx: NextPageContext) =>
-//   new ApolloClient({
-//     uri: 'https://api.devprotocol.xyz/v1/graphql',
-//     cache: devProtocolCache
-//   });
-
-// export const withDevProtocolApollo = createWithApollo(createDevProtocolClient);
