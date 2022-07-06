@@ -1,5 +1,5 @@
-import React, { InputHTMLAttributes, useEffect } from "react";
-import { FormLabel, Image } from "@chakra-ui/react";
+import React, { InputHTMLAttributes, useEffect, useRef } from "react";
+import { Flex, Box, FormLabel, Image, Button } from "@chakra-ui/react";
 import { useField, useFormikContext } from "formik";
 
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
@@ -9,14 +9,14 @@ type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   promoImage?: string;
 };
 
-
-const Thumb: React.FC<InputFieldProps> = ({ label, promoImage,  ...props }) => {
+const Thumb: React.FC<InputFieldProps> = ({ label, promoImage, ...props }) => {
   const [field, { error }] = useField(props);
 
   const [loading, setLoading] = React.useState(false);
   const [thumb, setThumb] = React.useState(null);
   const [file, setFile] = React.useState(null);
   const formikProps = useFormikContext();
+  const inputRef = useRef(null);
 
   if (loading) {
     return <p>loading...</p>;
@@ -25,10 +25,25 @@ const Thumb: React.FC<InputFieldProps> = ({ label, promoImage,  ...props }) => {
   return (
     <div>
       {/* <form onSubmit={handleSubmit}> */}
-      <div className="form-group">
-        {/* <label for="file">File upload</label> */}
-        {/* <FormLabel htmlFor={field.name}>{label}</FormLabel> */}
+      <FormLabel htmlFor={field.name}>{label}</FormLabel>
+
+      <Flex>
+        <Image
+          src={thumb || promoImage}
+          alt={"course image"}
+          objectFit='cover'
+          // className="img-thumbnail mt-2"
+          height={200}
+          width={300}
+
+        />
+
         <input
+          style={{
+            display: "none",
+          }}
+          ref={inputRef}
+          id="upload-photo"
           // id="file"
           // name="file"
           type="file"
@@ -52,14 +67,8 @@ const Thumb: React.FC<InputFieldProps> = ({ label, promoImage,  ...props }) => {
           }}
           //   className="form-control"
         />
-        <Image
-          src={thumb || promoImage}
-          alt={"course image"}
-          className="img-thumbnail mt-2"
-          height={200}
-          width={200}
-        />
-      </div>
+        <Button ml="3" onClick={() => inputRef.current.click()}>Upload File</Button>
+      </Flex>
     </div>
   );
 };

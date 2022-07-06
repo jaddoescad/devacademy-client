@@ -1,4 +1,3 @@
-// import { InstructorCourseQuery } from 'src/generated/graphql';
 import { LessonOrder } from "src/types/lesson";
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -39,16 +38,6 @@ export const reorderLessonMap = (
         destination.index
       ) as string[];
 
-      // const result = {
-      //   ...courseData,
-      //   sections: {
-      //     ...sections,
-      //     [sectionDestination?.id]: {
-      //       ...sections.find((x) => x.id === source.droppableId),
-      //       lessonOrder: [...reordered],
-      //     },
-      //   },
-      // };
       return {
         lessonOrder: [...reordered],
         sectionId: sectionDestination?.id,

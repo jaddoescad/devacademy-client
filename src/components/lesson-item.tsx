@@ -17,7 +17,7 @@ import VideoLessonCreationItem from "./video-lesson-creation-item";
 import { useRouter } from "next/router";
 import { ArticleSubHeader } from "./article-subheader";
 import { deleteVideo } from "src/services/deleteVideo";
-import {deleteVideoUrl} from "src/services/firestore";
+import { deleteVideoUrl, setIsArticle } from "src/services/firestore";
 import HoverToShowWrapper from "./HoverToShowWrapper";
 
 // Previously this extended React.Component
@@ -148,7 +148,10 @@ const LessonItem: React.FC<Props> = ({
               )}
             </Flex>
           }
-          {lesson?.videoEmbedUrl && lesson?.videoEmbedUrl !== "" && lesson.videoUrl && lesson.videoUrl !== "" ? (
+          {lesson?.videoEmbedUrl &&
+          lesson?.videoEmbedUrl !== "" &&
+          lesson.videoUrl &&
+          lesson.videoUrl !== "" ? (
             <>
               <Button
                 onClick={async () => {
@@ -200,14 +203,16 @@ const LessonItem: React.FC<Props> = ({
                         </Button>
 
                         <Button
-                          onClick={() => {
+                          onClick={async () => {
                             setUploadVideo(false);
                             setVideoOrArticle(false);
-                            // setCreateArticle(true);
+                            setCreateArticle(true);
 
                             // create article
-                            router.push({
-                              pathname: `/course-creation-platform/${courseId}/${lessonId}/article-editor`,
+                            setIsArticle(lessonId, courseId).then(() => {
+                              router.push({
+                                pathname: `/course-creation-platform/${courseId}/article-editor/${lessonId}`,
+                              });
                             });
                           }}
                         >

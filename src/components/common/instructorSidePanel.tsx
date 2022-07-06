@@ -7,14 +7,16 @@ import {
   Avatar,
   Heading,
   Button,
+  Box,
 } from "@chakra-ui/react";
+import { AlertPublishDialog } from "src/components/publish-dialog";
 
 import {
   FiMenu,
   FiHome,
   FiCalendar,
   FiMoreHorizontal,
-  FiArchive
+  FiArchive,
 } from "react-icons/fi";
 
 import NavItem from "./NavItem";
@@ -28,7 +30,11 @@ interface SidePanelProps {
   selected: string;
 }
 
-const InstructorSidePanel: React.FC<SidePanelProps> = ({ courseid, name, selected }) => {
+const InstructorSidePanel: React.FC<SidePanelProps> = ({
+  courseid,
+  name,
+  selected,
+}) => {
   const [navSize, changeNavSize] = useState("large");
   const router = useRouter();
 
@@ -72,18 +78,24 @@ const InstructorSidePanel: React.FC<SidePanelProps> = ({ courseid, name, selecte
         />
         <NavItem
           description=""
-          active={selected=== "landingPage" ? true : false}
+          active={selected === "landingPage" ? true : false}
           navSize={navSize}
           icon={<FiArchive />}
           title="Landing Page"
           courseid={courseid}
           destination="landingPage"
         />
-
-        <Button>
-          Submit Course
-        </Button>
-
+        <Box hidden={navSize === "small"}>
+          <AlertPublishDialog />
+        </Box>
+        {/* <Button
+          onClick={() => {}}
+          mt="10px"
+          
+          w="100%"
+        >
+          Submit
+        </Button> */}
       </Flex>
 
       <Flex
@@ -95,10 +107,7 @@ const InstructorSidePanel: React.FC<SidePanelProps> = ({ courseid, name, selecte
       >
         <Divider display={navSize == "small" ? "none" : "flex"} />
         <Flex mt={4} align="center">
-          <Avatar
-            size="sm"
-            name={name}
-          />
+          <Avatar size="sm" name={name} />
           <Flex
             flexDir="column"
             ml={4}
@@ -113,6 +122,6 @@ const InstructorSidePanel: React.FC<SidePanelProps> = ({ courseid, name, selecte
       </Flex>
     </Flex>
   );
-}
+};
 
 export default InstructorSidePanel;

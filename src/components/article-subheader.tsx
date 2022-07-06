@@ -1,6 +1,7 @@
 import { Button, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React from "react";
+import { deleteArticle } from "src/services/firestore";
 // import {useDeleteArticleMutation} from "src/generated/graphql";
 
 interface ArticleSubHeaderProps {
@@ -19,7 +20,7 @@ export const ArticleSubHeader: React.FC<ArticleSubHeaderProps> = ({
       <Button
         onClick={() => {
           router.push({
-            pathname: `/course-creation-platform/${courseId}/${lessonId}/article-editor`,
+            pathname: `/course-creation-platform/${courseId}/article-editor/${lessonId}`,
           });
         }}
       >
@@ -27,14 +28,7 @@ export const ArticleSubHeader: React.FC<ArticleSubHeaderProps> = ({
       </Button>
       <Button
         onClick={() => {
-          // deleteArticle({
-          //   variables: {
-          //     lessonId,
-          //   },
-          //   update: (cache) => {
-          //     cache.evict({ fieldName: "course" });
-          //   },
-          // })
+          deleteArticle(lessonId, courseId)
         }}
       >
         Delete Article

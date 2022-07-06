@@ -22,6 +22,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import FullMembershipContext, { fullMembership } from "src/context/fullMembershipContext";
 import {firebase} from "src/firebase";
 import AuthStateContext, { authState } from "src/context/authStateContext";
+import 'src/styles.css'
 
 const cache = new InMemoryCache();
 const client = new ApolloClient({

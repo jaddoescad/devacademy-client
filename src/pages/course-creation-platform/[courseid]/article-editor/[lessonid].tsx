@@ -5,6 +5,7 @@ import CreateReactEditor from "src/components/react-editor";
 // import { useSetArticleTextMutation } from "src/generated/graphql";
 import { withApollo } from "../../../../utils/withApollo";
 // import { useGetLessonQuery } from "src/generated/graphql";
+import { getArticle, saveArticle } from "src/services/firestore";
 
 interface ArticleEditorProps {}
 
@@ -15,19 +16,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({}) => {
   const [value, setValue] = React.useState("");
   // const [setArticleText] = useSetArticleTextMutation();
   const router = useRouter();
-
-  // const { data, error, loading, fetchMore, variables } = useGetLessonQuery({
-  //   variables: {
-  //     lessonId:
-  //       typeof router.query.lessonid === "string" ? router.query.lessonid : "",
-  //   },
-  // });
-
-  // useEffect(() => {
-  //   if (data && data.lesson && data.lesson.articleText) {
-  //     setValue(data.lesson.articleText);
-  //   }
-  // }, [data]);
+  const articleId = router.query.lessonid;
 
   function reset() {
     setSeconds(0);
@@ -38,23 +27,22 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({}) => {
     setIsActive(false);
   }
 
-  // const _setArticleText = async (articleid: string, value: string) => {
-  //   await setArticleText({
-  //     variables: {
-  //       lessonId: articleid,
-  //       articleText: value,
-  //     },
-  //     update: (cache) => {
-  //       cache.evict({ fieldName: "course" });
-  //     }
-  //   })
-  //     .then(() => {
-  //       setEditorChange("saved");
-  //     })
-  //     .catch(() => {
-  //       setEditorChange("error");
-  //     });
-  // };
+  const _setArticleText = async (articleid: string, value: string) => {
+    if (typeof router?.query?.courseid === "string") {
+      await saveArticle(router.query.courseid, articleid, value);
+      setEditorChange("Saved");
+    }
+  };
+
+  useEffect(() => {
+    if (router.isReady) {
+      getArticle(router.query.courseid, router.query.lessonid).then(
+        (snapshot) => {
+          setValue(snapshot.data()?.[router.query.lessonid]?.["articleText"]);
+        }
+      );
+    }
+  }, [router.isReady]);
 
   useEffect(() => {
     let interval;
@@ -68,7 +56,9 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({}) => {
             if (navigator.onLine) {
               setEditorChange("Saving...");
               toggle();
-              // _setArticleText(router.query.lessonid, value);
+              if (typeof router.query.lessonid === "string") {
+                _setArticleText(router.query.lessonid, value);
+              }
             }
           }
         }

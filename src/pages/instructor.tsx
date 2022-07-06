@@ -8,6 +8,33 @@ import { getInstructorCourses } from "src/services/firestore";
 import { firebase } from "src/firebase";
 import { DocumentData } from "firebase/firestore";
 
+function timeConverter(UNIX_timestamp) {
+  var a = new Date(UNIX_timestamp * 1000);
+  var months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  var year = a.getFullYear();
+  var month = months[a.getMonth()];
+  var date = a.getDate();
+  var hour = a.getHours();
+  var min = a.getMinutes();
+  var sec = a.getSeconds();
+  var time =
+    date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
+  return time;
+}
+
 const Course = () => {
   const [courses, setCourses] = useState<DocumentData[]>([]);
   const [coursesSet, setCoursesSet] = useState(false);
@@ -63,23 +90,41 @@ const Course = () => {
                 <Box>
                   <Flex>
                     <Image
-                      src="https://bit.ly/naruto-sage"
-                      alt="naruto"
+                      src={course.imageUrl}
                       objectFit="cover"
                       w={"100px"}
                       h="100px"
                     />
-                    <Box>
-                      <Text mt="2" ml="2">
-                        {course.title}
+                    <Flex pb="1" pl="1" pr="2" w="100%">
+                      <Flex flexDir={"column"} flex="1">
+                        <Text fontWeight={"bold"} mt="2" ml="2">
+                          {course.title}
+                        </Text>
+                        <Text
+                          color={
+                            course?.courseStatus === "Published"
+                              ? "green"
+                              : "red"
+                          }
+                          fontWeight={"extrabold"}
+                          mt="auto"
+                          ml="2"
+                        >
+                          {course?.courseStatus === "Published"
+                            ? "Published"
+                            : "DRAFT"}
+                        </Text>
+                      </Flex>
+                      <Text
+                        fontWeight={"medium"}
+                        mt="auto"
+                        fontSize={"14px"}
+                        ml="2"
+                      >
+                        {"Created at: " +
+                          course.createdAt.toDate().toDateString()}
                       </Text>
-                      <Text mt="auto" ml="2">
-                        {"created at: " + course.createdAt}
-                      </Text>
-                      <Text mt="auto" ml="2">
-                        DRAFT
-                      </Text>
-                    </Box>
+                    </Flex>
                   </Flex>
                 </Box>
               </Box>

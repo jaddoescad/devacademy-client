@@ -12,6 +12,7 @@ import {
   deleteDoc,
   deleteField,
   arrayRemove,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "src/firebase";
 
@@ -114,6 +115,27 @@ export const createLesson = (
   );
 };
 
+export const saveArticle = (courseId, articleid, value) => {
+  const editorRef = doc(
+    db,
+    "instructorCourses",
+    courseId,
+    "editors",
+    articleid
+  );
+
+  return setDoc(
+    editorRef,
+    {
+      [articleid]: {
+        articleText: value,
+        updatedAt: new Date(),
+      },
+    },
+    { merge: true }
+  );
+};
+
 //update data
 
 export const changeSectionTitle = async (sectionId, courseid, title) => {
@@ -173,11 +195,6 @@ export const changeLessonOrderSameSection = (
 ) => {
   const courseRef = doc(db, "instructorCourses", courseId);
 
-  console.log("changeLessonOrderSameSection");
-  console.log(lessonOrder);
-  console.log(sectionId);
-  console.log(courseId);
-  console.log("changeLessonOrderSameSection");
   return setDoc(
     courseRef,
     {
@@ -254,13 +271,24 @@ export const getCourse = async (id) => {
   return getDoc(docRef);
 };
 
+export const getArticle = async (courseId, articleid) => {
+  console.log(articleid);
+  const editorRef = doc(
+    db,
+    "instructorCourses",
+    courseId,
+    "editors",
+    articleid
+  );
+
+  return getDoc(editorRef);
+};
+
 //live data
 export const getInstructorCourseCurriculumObserver = (courseId, setCourse) => {
-  console.log("here");
   return onSnapshot(
     doc(db, "instructorCourses", courseId),
     (doc) => {
-      console.log("course data observer", doc.data());
       setCourse(doc.data());
     },
     (error) => {
@@ -316,18 +344,102 @@ export const deleteLesson = (lessonId, sectionId, courseId, courseData) => {
   );
 };
 
-export const deleteVideoUrl = (lessonId,  courseId) => {
+export const deleteVideoUrl = (lessonId, courseId) => {
   const courseRef = doc(db, "instructorCourses", courseId);
 
-  return setDoc(courseRef, {
-    courseCurriculum: {
-      articles: {
-        [lessonId]: {
-          videoUrl: null,
-          videoEmbedUrl: null,
-          updatedAt: new Date(),
+  return setDoc(
+    courseRef,
+    {
+      courseCurriculum: {
+        articles: {
+          [lessonId]: {
+            videoUrl: null,
+            videoEmbedUrl: null,
+            updatedAt: new Date(),
+          },
         },
       },
     },
-  }, { merge: true });
+    { merge: true }
+  );
+};
+
+//set isArticle to true on Firestore
+export const setIsArticle = (lessonId, courseId) => {
+  const courseRef = doc(db, "instructorCourses", courseId);
+
+  return setDoc(
+    courseRef,
+    {
+      courseCurriculum: {
+        articles: {
+          [lessonId]: {
+            isArticle: true,
+          },
+        },
+      },
+    },
+    { merge: true }
+  );
+};
+
+export const deleteArticle = (lessonId, courseId) => {
+  const batch = writeBatch(db);
+  const courseRef = doc(db, "instructorCourses", courseId);
+  const editorRef = doc(db, "instructorCourses", courseId, "editors", lessonId);
+
+  batch.set(
+    courseRef,
+    {
+      courseCurriculum: {
+        articles: {
+          [lessonId]: {
+            isArticle: false,
+          },
+        },
+      },
+    },
+    { merge: true }
+  );
+  batch.delete(editorRef);
+
+  return batch.commit();
+};
+
+export const publishCourse = async (courseId) => {
+  const batch = writeBatch(db);
+  const courseRef = doc(db, "instructorCourses", courseId);
+  const publishedCourseRef = doc(db, "publishedCourses", courseId);
+
+  const coursesnap = await getDoc(courseRef);
+
+  batch.set(
+    courseRef,
+    {
+      courseStatus: "Published",
+    },
+    { merge: true }
+  );
+
+  batch.set(publishedCourseRef, coursesnap.data());
+
+  const docsSnap = await getDocs(
+    collection(db, `instructorCourses/${courseId}/editors`)
+  );
+
+  docsSnap.forEach((document) => {
+    const editorRef = doc(
+      db,
+      "publishedCourses",
+      courseId,
+      "editors",
+      document.id
+    );
+    batch.set(
+      editorRef,
+      document.data()
+    );
+  });
+
+  return batch.commit();
 };
