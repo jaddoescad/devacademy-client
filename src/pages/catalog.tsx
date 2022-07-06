@@ -1,6 +1,6 @@
 import Pagination from "src/components/pagination";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Flex,
@@ -18,10 +18,16 @@ import Navigation from "src/components/common/Navigation";
 import { withApollo } from "../utils/withApollo";
 import NextLink from "next/link";
 import { capitalize } from "src/utils/capitalize";
+import { firebase } from "src/firebase";
+import { getPublishedCourses } from "src/services/firestore";
+import { DocumentData } from "firebase/firestore";
 
 const Post = () => {
   const router = useRouter();
   const limit = 3;
+  const [coursesSet, setCoursesSet] = useState(false);
+  const [courses, setCourses] = useState<DocumentData[]>([]);
+
   // const { data, error, loading, fetchMore, variables } =
   //   usePaginatedCoursesQuery({
   //     variables: {
@@ -31,6 +37,21 @@ const Post = () => {
   //         : 0 * limit,
   //     },
   //   });
+
+  useEffect(() => {
+    if (firebase.auth().currentUser?.uid && !coursesSet) {
+      getPublishedCourses(firebase.auth().currentUser?.uid).then(
+        (querySnapshot) => {
+          let courses_: DocumentData[] = [];
+          querySnapshot.docs.forEach((doc) => {
+            courses_.push({ ...doc.data(), id: doc.id });
+          });
+          setCourses(courses_);
+          setCoursesSet(true);
+        }
+      );
+    }
+  }, [firebase.auth().currentUser?.uid]);
 
   const handlePageClick = (pageNumber: number) => {
     console.log(pageNumber);
@@ -68,67 +89,61 @@ const Post = () => {
             </Text>
           </Box>
 
-          {/* {data.courses.courses.map((course) => (
-              <Box
-                key={course.id}
-                bg="white"
-                w="100%"
-                cursor={"pointer"}
-                color="black"
-                // borderRadius={"5px"}
-                marginBottom={"30px"}
-                onClick={() => {
-                  router.push({
-                    pathname: `/course/${course.id}`,
-                  });
-                }}
-              >
-                <Flex>
-                  <Image
-                    width={"220px"}
-                    height={"150px"}
-                    // borderTopRadius={"5px"}
-                    overflow="hidden"
-                    objectFit="cover"
-                    src={course.promoImage}
-                    alt={"course image"}
-                  />
+          {courses.map((course) => (
+            <Box
+              key={course.id}
+              bg="white"
+              w="100%"
+              cursor={"pointer"}
+              color="black"
+              // borderRadius={"5px"}
+              marginBottom={"30px"}
+              onClick={() => {
+                router.push({
+                  pathname: `/course/${course.id}`,
+                });
+              }}
+            >
+              <Flex>
+                <Image
+                  width={"220px"}
+                  height={"150px"}
+                  // borderTopRadius={"5px"}
+                  overflow="hidden"
+                  objectFit="cover"
+                  src={course.imageUrl}
+                  alt={"course image"}
+                />
 
-                  <Box ml="15px" flex={1}>
-                    <Box
-                      fontSize={"1.1rem"}
-                      fontWeight={"bold"}
-                      marginBottom={"10px"}
-                    >
-                      {course.title}
-                    </Box>
-                    <Text
-                      fontSize={"0.9rem"}
-                      noOfLines={3}
-                      marginBottom={"10px"}
-                      maxWidth={"850px"}
-
-                      // isTruncated
-                    >
-                      {course.description}
-                    </Text>
-                    <Box fontSize={"0.8rem"}>
-                      {`${
-                        capitalize(course.instructor.firstName) +
-                        " " +
-                        capitalize(course.instructor.lastName)
-                      }`}
-                    </Box>
+                <Box ml="15px" flex={1}>
+                  <Box
+                    fontSize={"1.1rem"}
+                    fontWeight={"bold"}
+                    marginBottom={"10px"}
+                  >
+                    {course.title}
                   </Box>
-                </Flex>
-                <Box
-                  marginTop="30px"
-                  w={"100%"}
-                  h={"1px"}
-                  backgroundColor={"gray"}
-                ></Box>
-              </Box>
-            ))}*/}
+                  <Text
+                    fontSize={"0.9rem"}
+                    noOfLines={3}
+                    marginBottom={"10px"}
+                    maxWidth={"850px"}
+
+                    // isTruncated
+                  >
+                    {course.description}
+                  </Text>
+                  <Box fontSize={"0.8rem"}>{`${course.instructorName}`}</Box>
+                </Box>
+              </Flex>
+              <Box
+                marginTop="30px"
+                w={"100%"}
+                h={"1px"}
+                backgroundColor={"gray"}
+              ></Box>
+            </Box>
+          ))}
           <Box>
             {/* <Pagination
                 total={data.courses.count}

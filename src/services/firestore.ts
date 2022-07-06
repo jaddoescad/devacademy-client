@@ -14,7 +14,7 @@ import {
   arrayRemove,
   writeBatch,
 } from "firebase/firestore";
-import { db } from "src/firebase";
+import { firebase, db } from "src/firebase";
 
 //add data
 export const createCourse = (title, uid) => {
@@ -266,8 +266,19 @@ export const getInstructorCourses = async (uid) => {
   return getDocs(q);
 };
 
+//read data
+export const getPublishedCourses = async (uid) => {
+  const q = query(collection(db, "publishedCourses"));
+  return getDocs(q);
+};
+
 export const getCourse = async (id) => {
   const docRef = doc(db, "instructorCourses", id);
+  return getDoc(docRef);
+};
+
+export const getPublishedCourse = async (id) => {
+  const docRef = doc(db, "publishedCourses", id);
   return getDoc(docRef);
 };
 
@@ -284,6 +295,17 @@ export const getArticle = async (courseId, articleid) => {
   return getDoc(editorRef);
 };
 
+export const getPublishedArticle = async (courseId, articleid) => {
+  const editorRef = doc(
+    db,
+    "publishedCourses",
+    courseId,
+    "editors",
+    articleid
+  );
+
+  return getDoc(editorRef);
+};
 //live data
 export const getInstructorCourseCurriculumObserver = (courseId, setCourse) => {
   return onSnapshot(
@@ -421,7 +443,10 @@ export const publishCourse = async (courseId) => {
     { merge: true }
   );
 
-  batch.set(publishedCourseRef, coursesnap.data());
+  batch.set(publishedCourseRef, {
+    ...coursesnap.data(),
+    instructorName: firebase.auth().currentUser?.displayName,
+  });
 
   const docsSnap = await getDocs(
     collection(db, `instructorCourses/${courseId}/editors`)
@@ -435,10 +460,7 @@ export const publishCourse = async (courseId) => {
       "editors",
       document.id
     );
-    batch.set(
-      editorRef,
-      document.data()
-    );
+    batch.set(editorRef, document.data());
   });
 
   return batch.commit();

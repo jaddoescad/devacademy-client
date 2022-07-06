@@ -1,5 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 // import {
 //   useGetPublishedCourseQuery,
 //   useGetLessonContentLazyQuery,
@@ -18,6 +18,10 @@ import Navigation from "src/components/common/Navigation";
 import FullMembershipContext from "src/context/fullMembershipContext";
 import { useProvider } from "src/fixtures/wallet/hooks";
 import WalletContext from "src/context/walletContext";
+import {
+  getPublishedArticle,
+  getPublishedCourse,
+} from "src/services/firestore";
 
 interface CourseBodyProps {
   courseId: string;
@@ -28,52 +32,54 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
   const { fullMembership } = useContext(FullMembershipContext);
   const { accountAddress, ethersProvider } = useProvider();
   const { address } = useContext(WalletContext);
-
-
-  
-  // const { data, error, loading, fetchMore, variables } =
-    // useGetPublishedCourseQuery({
-    //   variables: {
-    //     getPublishedCourseId: courseId,
-    //   },
-    // });
-
-  // const [getLessonContent, { data: lessonData, loading: lessonLoading }] =
-    // useGetLessonContentLazyQuery();
-
-
+  const [course, setCourse] = useState<any>(null);
+  const [lessonId, setLessonId] = useState<number | null>(null);
+  const [article, setArticle] = useState<any>(null);
 
   useEffect(() => {
-    const firstSectionId = data?.getPublishedCourse?.sectionOrder[0];
-    if (firstSectionId && data?.getPublishedCourse?.sections) {
-      const firstLessonId = data?.getPublishedCourse?.sections.find(
-        (x) => x.id === firstSectionId + "_published"
-      )?.lessonOrder[0];
-      if (firstLessonId) {
-        getLessonContent({
-          variables: {
-            lessonId: firstLessonId + "_published",
-          },
-        });
+    if (!router.isReady) return;
+    getPublishedCourse(courseId as string).then((courseSnapshot) => {
+      if (courseSnapshot.data()) {
+        setCourse(courseSnapshot.data());
+        const firstSectionId =
+          courseSnapshot.data()?.courseCurriculum.sectionOrder[0];
+        const firstArticleId =
+          courseSnapshot.data()?.courseCurriculum.sections[firstSectionId]
+            .lessonOrder[0];
+        setLessonId(firstArticleId);
+      }
+    });
+  }, [router.isReady]);
+
+  useEffect(() => {
+    //check if lessonId is an article
+    if (!router.isReady) return;
+    if (lessonId && course?.courseCurriculum?.articles?.[lessonId]?.isArticle) {
+      getPublishedArticle(courseId, lessonId).then((courseSnapshot) => {
+        if (courseSnapshot.data()) {
+          setArticle(courseSnapshot.data()?.[lessonId].articleText);
+        }
+      });
+    } else {
+      if (lessonId) {
+        console.log(
+          "frkfr", course.courseCurriculum?.articles?.[lessonId]
+        );
       }
     }
-  }, [data]);
 
-  useEffect(() => {
-    console.log("lessonData id", lessonData?.lesson?.id);
-    console.log("address is", address);
-  }, [lessonData, address]);
+    //if not article fetch article
+  }, [lessonId]);
 
   return (
     <Flex flexDir={"column"} align="center" width={"100%"} height="100vh">
-      <Navigation
-        isNotMaxW={true}
-        courseTitle={data?.getPublishedCourse?.title}
-      />
+      <Navigation isNotMaxW={true} courseTitle={course?.title} />
 
       <Flex pl={5} border={"2px solid lightgray;"} maxH={"80vh"} width="100%">
         <Box flex="1" height={"100%"}>
-          {lessonData?.lesson?.videoEmbedUrl && fullMembership ? (
+          {lessonId &&
+          course.courseCurriculum?.articles?.[lessonId].videoEmbedUrl &&
+          fullMembership ? (
             <Box
               position={"relative"}
               pb={"56.25%"}
@@ -85,7 +91,7 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
             >
               <iframe
                 src={
-                  lessonData?.lesson?.videoEmbedUrl +
+                  course.courseCurriculum?.articles?.[lessonId].videoEmbedUrl +
                   "&amp;title=0&amp;byline=0&amp;portrait=0&amp;speed=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=243900"
                 }
                 width="100%"
@@ -103,16 +109,28 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
                 title="Untitled"
               ></iframe>
             </Box>
-          ) : lessonData?.lesson?.articleText && fullMembership ? (
+          ) : lessonId &&
+            course.courseCurriculum?.articles?.[lessonId].isArticle &&
+            fullMembership ? (
             <Box ml={5} width="90%" height={"90%"}>
-              <CourseDisplay textContent={lessonData?.lesson?.articleText} />
+              <CourseDisplay textContent={article} />
             </Box>
           ) : !address ? (
-            <Box color="white" width="100%" height={"70vh"} backgroundColor={"black"}>
+            <Box
+              color="white"
+              width="100%"
+              height={"70vh"}
+              backgroundColor={"black"}
+            >
               Please Connect to Wallet
             </Box>
           ) : (
-            <Box color="white" width="100%" height={"70vh"} backgroundColor={"black"}>
+            <Box
+              color="white"
+              width="100%"
+              height={"70vh"}
+              backgroundColor={"black"}
+            >
               Please get Stoken membership to access this course
             </Box>
           )}
@@ -127,10 +145,8 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
             Course Content
           </Box>
           <Accordion allowMultiple>
-            {data?.getPublishedCourse?.sectionOrder.map((key, index) => {
-              const section = data?.getPublishedCourse?.sections?.find(
-                (x) => x.id === key + "_published"
-              );
+            {course?.courseCurriculum?.sectionOrder.map((key, index) => {
+              const section = course?.courseCurriculum?.sections?.[key];
               return (
                 <AccordionItem key={key}>
                   <Box>
@@ -142,30 +158,31 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
                     </AccordionButton>
                     <AccordionPanel p="0">
                       {section?.lessonOrder.map((lessonKey, index) => {
-                        const lesson = section?.lessons?.find(
-                          (x) => x.id === lessonKey + "_published"
-                        );
                         return (
                           <Box
                             p="4"
                             m="1px"
                             onClick={() => {
-                              lesson?.id &&
-                                getLessonContent({
-                                  variables: {
-                                    lessonId: lesson?.id,
-                                  },
-                                });
+                              setLessonId(lessonKey);
+                              // lesson?.id &&
+                              // getLessonContent({
+                              //   variables: {
+                              //     lessonId: lesson?.id,
+                              //   },
+                              // });
                             }}
                             cursor={"pointer"}
                             key={lessonKey}
                             backgroundColor={
-                              lessonData?.lesson?.id === lesson?.id
-                                ? "lightgray"
-                                : "white"
+                              lessonId === lessonKey ? "lightgray" : "white"
                             }
                           >
-                            <Box>{lesson?.title}</Box>
+                            <Box>
+                              {
+                                course?.courseCurriculum?.articles?.[lessonKey]
+                                  ?.title
+                              }
+                            </Box>
                           </Box>
                         );
                       })}

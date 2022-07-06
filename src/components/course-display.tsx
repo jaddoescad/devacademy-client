@@ -54,6 +54,7 @@ export const CourseDisplay: React.FC<CourseDisplayProps> = ({
   };
   return (
     <div className="custom-html-style" style={{ }}>
+      
       <ReactMarkdown
         components={components}
         rehypePlugins={[rehypeKatex]}
