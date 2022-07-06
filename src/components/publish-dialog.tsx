@@ -9,6 +9,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { useToast } from '@chakra-ui/react'
 
 import React from "react";
 import { publishCourse } from "src/services/firestore";
@@ -17,6 +18,7 @@ export function AlertPublishDialog() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef(null);
   const router = useRouter();
+  const toast = useToast()
 
   return (
     <>
@@ -46,7 +48,23 @@ export function AlertPublishDialog() {
               <Button
                 colorScheme="green"
                 onClick={() => {
-                  publishCourse(router.query.courseid);
+                  publishCourse(router.query.courseid).then(() => {
+                    onClose()
+                    toast({
+                      title: "Success! Your course has been published",
+                      status: 'success',
+                      duration: 9000,
+                      isClosable: true,
+                    })
+                  }).catch((error) => {
+                    onClose()
+                    toast({
+                      title: error,
+                      status: 'error',
+                      duration: 9000,
+                      isClosable: true,
+                    })
+                  });
                 }}
                 ml={3}
               >

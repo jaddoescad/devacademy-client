@@ -15,6 +15,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { firebase, db } from "src/firebase";
+import { checkNoVideo } from "src/utils/checkNoVideo";
 
 //add data
 export const createCourse = (title, uid) => {
@@ -296,13 +297,7 @@ export const getArticle = async (courseId, articleid) => {
 };
 
 export const getPublishedArticle = async (courseId, articleid) => {
-  const editorRef = doc(
-    db,
-    "publishedCourses",
-    courseId,
-    "editors",
-    articleid
-  );
+  const editorRef = doc(db, "publishedCourses", courseId, "editors", articleid);
 
   return getDoc(editorRef);
 };
@@ -434,6 +429,8 @@ export const publishCourse = async (courseId) => {
   const publishedCourseRef = doc(db, "publishedCourses", courseId);
 
   const coursesnap = await getDoc(courseRef);
+
+  checkNoVideo(coursesnap.data()?.courseCurriculum);
 
   batch.set(
     courseRef,
