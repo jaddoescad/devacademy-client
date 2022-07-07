@@ -12,18 +12,21 @@ import {
 import NextLink from "next/link";
 import { firebase, uiConfig } from "src/firebase";
 import AuthStateContext from "src/context/authStateContext";
+import { IconButton } from "@chakra-ui/react";
+import { ArrowBackIcon } from '@chakra-ui/icons'
 
-interface InstructorNavigationProps {}
+interface InstructorNavigationProps {
+  editorChange: String;
+}
 
-export const InstructorNavigation: React.FC<
-  InstructorNavigationProps
-> = ({}) => {
+export const InstructorNavigation: React.FC<InstructorNavigationProps> = ({
+  editorChange,
+}) => {
   const { authState } = useContext(AuthStateContext);
 
   var body;
 
   useEffect(() => {
-    console.log("checking", authState);
     console.log(firebase.auth().currentUser);
   }, [authState]);
 
@@ -44,7 +47,9 @@ export const InstructorNavigation: React.FC<
               <MenuItem>
                 <Flex flexDirection={"column"}>
                   <Box>{firebase.auth().currentUser?.displayName}</Box>
-                  <Box fontSize={"12"}>{firebase.auth().currentUser?.email}</Box>
+                  <Box fontSize={"12"}>
+                    {firebase.auth().currentUser?.email}
+                  </Box>
                 </Flex>
               </MenuItem>
               <MenuItem
@@ -74,6 +79,17 @@ export const InstructorNavigation: React.FC<
 
   return (
     <Flex bg="#212121" color={"white"} p={4}>
+      <IconButton
+        variant="link"
+        colorScheme="white"
+        aria-label="go back"
+        _focusVisible={{
+          outline: "none",
+          // boxShadow: "0 0 2px 2px #51a7e8"
+        }}
+        icon={<ArrowBackIcon w={6} h={6}/>}
+      />
+      {editorChange && <Flex alignItems={"center"}>{editorChange}</Flex>}
       <Box ml={"auto"}>{body}</Box>
     </Flex>
   );

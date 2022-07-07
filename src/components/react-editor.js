@@ -68,12 +68,10 @@ const CreateReactEditor = (props) => {
       reader.onload = (data) => {
         // const storageRef = storage.ref()
         // var userRef = storageRef.child('images').child(uuidv4())
-        uploadImageToFirebase(file, "editor-images").then(
-          (downloadURL) => {
-            if (!downloadURL) return;
-            resolve(downloadURL);
-          }
-        );
+        uploadImageToFirebase(file, "editor-images").then((downloadURL) => {
+          if (!downloadURL) return;
+          resolve(downloadURL);
+        });
       };
       reader.readAsDataURL(file);
     });
@@ -100,22 +98,22 @@ const CreateReactEditor = (props) => {
   };
 
   return (
-    <ForwardRefEditor
-      style={{ height: "100%", width: "100%" }}
-      value={props.value}
-      ref={editorRef}
-      renderHTML={(text) => (
-        <ReactMarkdown
-          components={components}
-          rehypePlugins={[rehypeKatex]}
-          remarkPlugins={[gfm, remarkMath]}
-          children={text}
-        />
-      )}
-      placeholder="Start typing here..."
-      onImageUpload={onImageUpload}
-      onChange={handleEditorChange}
-    />
+      <ForwardRefEditor
+        style={{ height: "100%", width: "100%" }}
+        value={props.value}
+        ref={editorRef}
+        renderHTML={(text) => (
+          <ReactMarkdown
+            components={components}
+            rehypePlugins={[rehypeKatex]}
+            remarkPlugins={[gfm, remarkMath]}
+            children={text}
+          />
+        )}
+        placeholder="Start typing here..."
+        onImageUpload={onImageUpload}
+        onChange={handleEditorChange}
+      />
   );
 };
 

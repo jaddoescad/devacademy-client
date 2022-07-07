@@ -6,6 +6,7 @@ import CreateReactEditor from "src/components/react-editor";
 import { withApollo } from "../../../../utils/withApollo";
 // import { useGetLessonQuery } from "src/generated/graphql";
 import { getArticle, saveArticle } from "src/services/firestore";
+import { InstructorNavigation } from "src/components/common/InstructorNavigation";
 
 interface ArticleEditorProps {}
 
@@ -72,7 +73,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({}) => {
 
   return (
     <div>
-      <Box color={"white"}>{editorChange}</Box>
+      <InstructorNavigation editorChange={editorChange}/>
       <div
         style={{
           paddingLeft: 0,

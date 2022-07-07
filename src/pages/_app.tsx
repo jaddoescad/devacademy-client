@@ -23,6 +23,7 @@ import FullMembershipContext, { fullMembership } from "src/context/fullMembershi
 import {firebase} from "src/firebase";
 import AuthStateContext, { authState } from "src/context/authStateContext";
 import 'src/styles.css'
+import "focus-visible/dist/focus-visible"
 
 const cache = new InMemoryCache();
 const client = new ApolloClient({

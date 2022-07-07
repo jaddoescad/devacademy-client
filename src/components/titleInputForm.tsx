@@ -153,7 +153,7 @@ const PopoverEditForm = (props) => {
           <PopoverContent>
             <FocusLock returnFocus persistentFocus={false}>
               <PopoverArrow />
-              <PopoverCloseButton />
+              <PopoverCloseButton/>
               <Form
                 {...props}
                 courseData={props.courseData}

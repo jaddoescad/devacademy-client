@@ -15,6 +15,7 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 
 
 import gfm from "remark-gfm";
+import { InstructorNavigation } from "./common/InstructorNavigation";
 
 interface CourseDisplayProps {
   textContent: string;
@@ -54,7 +55,7 @@ export const CourseDisplay: React.FC<CourseDisplayProps> = ({
   };
   return (
     <div className="custom-html-style" style={{ }}>
-      
+      <InstructorNavigation />
       <ReactMarkdown
         components={components}
         rehypePlugins={[rehypeKatex]}

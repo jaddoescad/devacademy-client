@@ -15,8 +15,10 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import FocusLock from "react-focus-lock";
-import { deleteSection, deleteLesson } from "src/services/firestore";
+import { deleteSection, deleteLesson, deleteArticle } from "src/services/firestore";
 import { withApollo } from "src/utils/withApollo";
+import { deleteVideo } from "src/services/deleteVideo";
+import { deleteVideoUrl, setIsArticle } from "src/services/firestore";
 
 interface Props {
   onCancel: () => void;
@@ -25,6 +27,7 @@ interface Props {
   lessonId: string;
   courseId: string;
   courseData?: any;
+  videoUrl?: string
 }
 
 // 2. Create the form
@@ -34,7 +37,8 @@ const Form: React.FC<Props> = ({
   sectionId,
   lessonId,
   courseId,
-  courseData
+  courseData,
+  videoUrl
 }) => {
 
 
@@ -52,10 +56,13 @@ const Form: React.FC<Props> = ({
             onClick={async () => {
               if (elementType === "lesson") {
                 deleteLesson(lessonId, sectionId, courseId, courseData)
-
               } else if (elementType === "section") {
                 deleteSection(sectionId, courseId, courseData);
-
+              } else if (elementType === "article") {
+                deleteArticle(lessonId, courseId)
+              } else if (elementType === "video") {
+                await deleteVideo(videoUrl);
+                deleteVideoUrl(lessonId, courseId);
               }
             }}
           >
@@ -76,6 +83,7 @@ interface PopOverEditProps {
   sectionId: string;
   lessonId: string;
   courseId: string;
+  videoUrl?: string;
   setKeepFocus: (value: boolean) => void;
 }
 
@@ -88,6 +96,7 @@ const PopoverEditForm: React.FC<PopOverEditProps> = ({
   courseId,
   lessonId,
   setKeepFocus,
+  videoUrl,
   courseData
 }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
@@ -111,7 +120,7 @@ const PopoverEditForm: React.FC<PopOverEditProps> = ({
       >
         <PopoverTrigger>
           {actionComponent ? (
-            <IconButton aria-label="edit" icon={actionComponent}></IconButton>
+            <IconButton aria-label="action" icon={actionComponent}></IconButton>
           ) : (
             <Button width={"10px"}>Add</Button>
           )}
@@ -126,6 +135,7 @@ const PopoverEditForm: React.FC<PopOverEditProps> = ({
               lessonId={lessonId}
               courseId={courseId}
               courseData={courseData}
+              videoUrl={videoUrl}
               onCancel={() => {
                 setKeepFocus(false);
                 onClose();

@@ -19,7 +19,6 @@ import { ArticleSubHeader } from "./article-subheader";
 import { deleteVideo } from "src/services/deleteVideo";
 import { deleteVideoUrl, setIsArticle } from "src/services/firestore";
 import HoverToShowWrapper from "./HoverToShowWrapper";
-
 // Previously this extended React.Component
 // That was a good thing, because using React.PureComponent can hide
 // issues with the selectors. However, moving it over does can considerable
@@ -153,11 +152,11 @@ const LessonItem: React.FC<Props> = ({
           lesson.videoUrl &&
           lesson.videoUrl !== "" ? (
             <>
-              <Button
+              {/* <Button
                 onClick={async () => {
                   try {
-                    await deleteVideo(lesson.videoUrl);
-                    deleteVideoUrl(lessonId, courseId);
+                    // await deleteVideo(lesson.videoUrl);
+                    // deleteVideoUrl(lessonId, courseId);
                   } catch (error) {
                     // deleteVideoPgsql();
                   }
@@ -165,7 +164,15 @@ const LessonItem: React.FC<Props> = ({
                 }}
               >
                 delete
-              </Button>
+              </Button> */}
+              <PopoverDeleteForm
+                elementType="video"
+                lessonId={lessonId}
+                courseId={courseId}
+                videoUrl={lesson.videoUrl}
+                setKeepFocus={setKeepFocus}
+                actionComponent={<FiTrash />}
+              />
               <Button
                 onClick={() => {
                   router.push(
