@@ -25,7 +25,7 @@ import {
   changeLessonTitle,
   reorderSection,
   changeLessonOrderSameSection,
-  changeLessonOrderDifferentSection
+  changeLessonOrderDifferentSection,
 } from "src/services/firestore";
 
 export const createSectionService = async (
@@ -35,15 +35,13 @@ export const createSectionService = async (
   title: string
 ) => {
   let sectionId = uuidv4();
-  let sectionOrder;
+  var sectionOrder = data?.courseCurriculum?.sectionOrder;
+
   if (data?.courseCurriculum?.sectionOrder) {
     sectionOrder = [
-      ...data?.courseCurriculum?.sectionOrder.slice(0, sectionIndex),
+      ...sectionOrder.slice(0, sectionIndex),
       sectionId,
-      ...data?.courseCurriculum?.sectionOrder.slice(
-        sectionIndex,
-        data?.courseCurriculum?.sectionOrder.length
-      ),
+      ...sectionOrder.slice(sectionIndex, sectionOrder.length),
     ];
   } else {
     sectionOrder = [sectionId];
@@ -60,7 +58,8 @@ export const createLessonService = async (
 ) => {
   const lessonId = uuidv4();
 
-  var lessonOrder = course?.courseCurriculum?.sections?.[sectionId]?.lessonOrder;
+  var lessonOrder =
+    course?.courseCurriculum?.sections?.[sectionId]?.lessonOrder;
 
   if (lessonOrder) {
     lessonOrder = [
@@ -109,7 +108,7 @@ export const reorderLessonService = (
   courseData: any,
   source: number,
   destination: number,
-  courseId: string,
+  courseId: string
 ) => {
   const lessonOrderData: LessonOrder = reorderLessonMap(
     courseData,
@@ -117,8 +116,11 @@ export const reorderLessonService = (
     destination
   );
   if (lessonOrderData.type === "same-section") {
-
-    changeLessonOrderSameSection(courseId, lessonOrderData.sectionId, lessonOrderData.lessonOrder)
+    changeLessonOrderSameSection(
+      courseId,
+      lessonOrderData.sectionId,
+      lessonOrderData.lessonOrder
+    );
   } else if (lessonOrderData.type === "different-section") {
     if (
       lessonOrderData.currentLessonOrder &&
@@ -135,7 +137,7 @@ export const reorderLessonService = (
         lessonOrderData.currentSectionId,
         lessonOrderData.nextSectionId,
         courseId
-      )
+      );
 
       // changeLessonOrderDifferentSection({
       //   variables: {

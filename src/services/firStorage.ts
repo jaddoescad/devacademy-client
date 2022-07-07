@@ -3,9 +3,9 @@ import {getStorage, uploadBytes, getDownloadURL, ref} from 'firebase/storage'
 import { v4 as uuidv4 } from 'uuid'
 
 
-export const uploadImageToFirebase = (fileImage) => {
+export const uploadImageToFirebase = (fileImage, folder ) => {
     const file = fileImage;
-    const coverImageRef = ref(firStorage, `course-cover-image/${uuidv4()}`);
+    const coverImageRef = ref(firStorage, `${folder}/${uuidv4()}`);
   
     //   var userRef = storageRef.child('course-cover-image').child(uuidv4())
     return uploadBytes(coverImageRef, fileImage)

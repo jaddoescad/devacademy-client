@@ -98,7 +98,7 @@ const Board: React.FC<Props> = ({ courseId, ...props }) => {
                   key={key}
                   sectionIndex={index}
                   title={
-                    course?.courseCurriculum?.sections?.[key].title || "error: title does not exist"
+                    course?.courseCurriculum?.sections?.[key]?.title || "error: title does not exist"
                   }
                   sectionId={key}
                   courseData={course}
@@ -116,8 +116,8 @@ const Board: React.FC<Props> = ({ courseId, ...props }) => {
                     course={course}
                     courseData={course}
                     sectionIndex={
-                      course?.sectionOrder?.length
-                        ? course.course?.sectionOrder?.length
+                      course?.courseCurriculum.sectionOrder?.length
+                        ? course.courseCurriculum?.sectionOrder?.length
                         : 0
                     }
                     elementType="section"

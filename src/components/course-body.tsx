@@ -75,7 +75,7 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
     <Flex flexDir={"column"} align="center" width={"100%"} height="100vh">
       <Navigation isNotMaxW={true} courseTitle={course?.title} />
 
-      <Flex pl={5} border={"2px solid lightgray;"} maxH={"80vh"} width="100%">
+      <Flex flex={1} width="100%">
         <Box flex="1" height={"100%"}>
           {lessonId &&
           course.courseCurriculum?.articles?.[lessonId].videoEmbedUrl &&
@@ -87,7 +87,7 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
               width={"100%"}
               overflow={"hidden"}
               backgroundColor={"black"}
-              mt={5}
+              // mt={5}
             >
               <iframe
                 src={
@@ -141,10 +141,10 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
           height="100%"
           width={"400px"}
         >
-          <Box p="15px" fontWeight={"bold"} fontSize={"large"}>
+          <Box  p="15px" fontWeight={"bold"} fontSize={"large"}>
             Course Content
           </Box>
-          <Accordion allowMultiple>
+          <Accordion defaultIndex={[0]} allowMultiple>
             {course?.courseCurriculum?.sectionOrder.map((key, index) => {
               const section = course?.courseCurriculum?.sections?.[key];
               return (
@@ -164,12 +164,6 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
                             m="1px"
                             onClick={() => {
                               setLessonId(lessonKey);
-                              // lesson?.id &&
-                              // getLessonContent({
-                              //   variables: {
-                              //     lessonId: lesson?.id,
-                              //   },
-                              // });
                             }}
                             cursor={"pointer"}
                             key={lessonKey}

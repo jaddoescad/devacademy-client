@@ -194,7 +194,7 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
           }}
         >
           <Head>
-            <title>Stakes.social</title>
+            <title>Dev Academy</title>
             <meta
               name="viewport"
               content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"

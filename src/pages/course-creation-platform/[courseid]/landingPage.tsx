@@ -80,7 +80,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({}) => {
 
                     setSubmitting(true)
                     if (values.file) {
-                      uploadImageToFirebase(values.file).then((url) => {
+                      uploadImageToFirebase(values.file, 'course-cover-image').then((url) => {
                         
                         saveCourseInfoWithImage(
                           courseId,

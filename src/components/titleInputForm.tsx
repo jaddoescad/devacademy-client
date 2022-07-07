@@ -1,6 +1,5 @@
 // import  FocusLock from "react-focus-lock"
 
-import { EditIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
