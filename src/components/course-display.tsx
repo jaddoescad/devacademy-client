@@ -55,7 +55,6 @@ export const CourseDisplay: React.FC<CourseDisplayProps> = ({
   };
   return (
     <div className="custom-html-style" style={{ }}>
-      <InstructorNavigation />
       <ReactMarkdown
         components={components}
         rehypePlugins={[rehypeKatex]}

@@ -55,6 +55,7 @@ import {
   Img,
 } from "@chakra-ui/react";
 import StokenValueContext from "src/context/fullMembershipContext";
+import { getMinimumDevForMembership } from "src/services/firestore";
 
 const Grid = styled.div`
   display: grid;
@@ -158,22 +159,21 @@ export default function Navigation({ isNotMaxW, courseTitle }) {
   const isDeny = isDenyProperty(network, propertyAddress);
   const { sTokens } = useDetectSTokens(propertyAddress, accountAddress);
 
-  useEffect(() => {
-    console.log("sTokens", fullMembership);
-  }, [sTokens]);
-
   React.useEffect(() => {
-    setFullMembership(false);
+    setFullMembership(true);
     if (!isDeny) {
       if (accountAddress && sTokens) {
         sTokens.forEach((sToken) => {
           getStokenPositions(ethersProvider!, sToken).then((positionStoken) => {
-            const totalStake = parseFloat(
-              toNaturalNumber(positionStoken?.amount).toFixed()
-            );
-            if (totalStake > 100) {
-              setFullMembership(true);
-            }
+            getMinimumDevForMembership().then((minDev) => {
+              const totalStake = parseFloat(
+                toNaturalNumber(positionStoken?.amount).toFixed()
+              );
+
+              if (totalStake > minDev.data()?.minDev) {
+                setFullMembership(true);
+              }
+            });
           });
         });
       }
@@ -187,7 +187,11 @@ export default function Navigation({ isNotMaxW, courseTitle }) {
           <Box w={"100%"} maxW={isNotMaxW ? "100%" : "1200px"}>
             <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
               <HStack spacing={8} alignItems={"center"}>
-                <Link>
+                <Link
+                  onClick={() => {
+                    router.replace("/catalog");
+                  }}
+                >
                   <Box boxSize="120px" pt={8} pl={5} mt={5} objectFit="cover">
                     <Img src={"/logo-black.png"} />
                   </Box>
@@ -249,7 +253,11 @@ export default function Navigation({ isNotMaxW, courseTitle }) {
                   </Menu>
                 )}
                 <Button
-                  onClick={() => router.push("/membership")}
+                  onClick={() =>
+                    router.push(
+                      "https://stakes.social/arbitrum-one/0xF83ffb295dbb01f97f908eE0C617DB85A3f02310"
+                    )
+                  }
                   variant={"solid"}
                   colorScheme={"green"}
                   size={"sm"}

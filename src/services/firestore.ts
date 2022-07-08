@@ -43,23 +43,47 @@ export const saveCourseInfoWithImage = (
   description,
   imageUrl
 ) => {
-  console.log(imageUrl);
   const courseRef = doc(db, "instructorCourses", courseId);
-  return updateDoc(courseRef, {
+  const coursePublishedRef = doc(db, "publishedCourses", courseId);
+
+  const batch = writeBatch(db);
+
+  batch.update(courseRef, {
     title,
     description,
     imageUrl,
     updatedAt: new Date(),
   });
+
+  batch.update(coursePublishedRef, {
+    title,
+    description,
+    imageUrl,
+    updatedAt: new Date(),
+  });
+
+  return batch.commit()
 };
 
 export const saveCourseInfoWithoutImage = (courseId, title, description) => {
   const courseRef = doc(db, "instructorCourses", courseId);
-  return updateDoc(courseRef, {
+  const coursePublishedRef = doc(db, "publishedCourses", courseId);
+
+  const batch = writeBatch(db);
+
+   batch.update(courseRef, {
     title,
     description,
     updatedAt: new Date(),
   });
+
+  batch.update(coursePublishedRef, {
+    title,
+    description,
+    updatedAt: new Date(),
+  });
+
+  return batch.commit()
 };
 
 export const createSection = (sectionId, courseId, title, sectionOrder) => {
@@ -278,6 +302,12 @@ export const getCourse = async (id) => {
   return getDoc(docRef);
 };
 
+export const getMinimumDevForMembership = async () => {
+  const minDevRef = doc(db, "config", "membership");
+  return getDoc(minDevRef);
+}
+
+
 export const getPublishedCourse = async (id) => {
   const docRef = doc(db, "publishedCourses", id);
   return getDoc(docRef);
@@ -462,3 +492,4 @@ export const publishCourse = async (courseId) => {
 
   return batch.commit();
 };
+

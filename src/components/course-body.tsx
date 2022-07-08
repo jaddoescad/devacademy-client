@@ -22,6 +22,7 @@ import {
   getPublishedArticle,
   getPublishedCourse,
 } from "src/services/firestore";
+import { InstructorNavigation } from "./common/InstructorNavigation";
 
 interface CourseBodyProps {
   courseId: string;

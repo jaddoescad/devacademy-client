@@ -91,12 +91,12 @@ const Post = () => {
 
           {courses.map((course) => (
             <Box
+              width={"300px"}
               key={course.id}
               bg="white"
-              w="100%"
               cursor={"pointer"}
               color="black"
-              // borderRadius={"5px"}
+              border={"1px solid #007ab6"}
               marginBottom={"30px"}
               onClick={() => {
                 router.push({
@@ -104,9 +104,9 @@ const Post = () => {
                 });
               }}
             >
-              <Flex>
+              <Box>
                 <Image
-                  width={"220px"}
+                  width={"100%"}
                   height={"150px"}
                   // borderTopRadius={"5px"}
                   overflow="hidden"
@@ -115,33 +115,17 @@ const Post = () => {
                   alt={"course image"}
                 />
 
-                <Box ml="15px" flex={1}>
+                <Flex flexDir={"column"} h="75px" m="15px" flex={1}>
                   <Box
-                    fontSize={"1.1rem"}
+                    fontSize={"1rem"}
                     fontWeight={"bold"}
-                    marginBottom={"10px"}
+                    flex={1}
                   >
                     {course.title}
                   </Box>
-                  <Text
-                    fontSize={"0.9rem"}
-                    noOfLines={3}
-                    marginBottom={"10px"}
-                    maxWidth={"850px"}
-
-                    // isTruncated
-                  >
-                    {course.description}
-                  </Text>
                   <Box fontSize={"0.8rem"}>{`${course.instructorName}`}</Box>
-                </Box>
-              </Flex>
-              <Box
-                marginTop="30px"
-                w={"100%"}
-                h={"1px"}
-                backgroundColor={"gray"}
-              ></Box>
+                </Flex>
+              </Box>
             </Box>
           ))}
           <Box>

@@ -61,7 +61,6 @@ const Form: React.FC<Props> = ({
               } else if (elementType === "article") {
                 deleteArticle(lessonId, courseId)
               } else if (elementType === "video") {
-                await deleteVideo(videoUrl);
                 deleteVideoUrl(lessonId, courseId);
               }
             }}
