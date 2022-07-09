@@ -16,7 +16,7 @@ import { IconButton } from "@chakra-ui/react";
 import { ArrowBackIcon } from '@chakra-ui/icons'
 
 interface InstructorNavigationProps {
-  editorChange: String;
+  editorChange?: String;
 }
 
 export const InstructorNavigation: React.FC<InstructorNavigationProps> = ({

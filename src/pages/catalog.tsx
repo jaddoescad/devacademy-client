@@ -21,6 +21,7 @@ import { capitalize } from "src/utils/capitalize";
 import { firebase } from "src/firebase";
 import { getPublishedCourses } from "src/services/firestore";
 import { DocumentData } from "firebase/firestore";
+import {SubscriptionAlert} from 'src/components/subscription-alert'
 
 const Post = () => {
   const router = useRouter();
@@ -28,15 +29,6 @@ const Post = () => {
   const [coursesSet, setCoursesSet] = useState(false);
   const [courses, setCourses] = useState<DocumentData[]>([]);
 
-  // const { data, error, loading, fetchMore, variables } =
-  //   usePaginatedCoursesQuery({
-  //     variables: {
-  //       limit: limit,
-  //       offset: router.query.p
-  //         ? (parseInt(router.query.p as string) - 1) * limit
-  //         : 0 * limit,
-  //     },
-  //   });
 
   useEffect(() => {
     if (firebase.auth().currentUser?.uid && !coursesSet) {
@@ -81,6 +73,7 @@ const Post = () => {
       w="100%"
     >
       <Navigation />
+      <SubscriptionAlert />
       <Flex flex="1" flexDir={"column"} align="center">
         <Box pl={5} pr={5} height={"100%"} width="100%" maxWidth={"1200px"}>
           <Box mb="4" mt="4">

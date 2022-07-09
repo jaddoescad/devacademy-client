@@ -885,7 +885,6 @@ export const useDetectSTokens = (propertyAddress?: string, accountAddress?: stri
   const { nonConnectedEthersProvider, ethersProvider } = useProvider()
   const { name: chain } = useDetectChain(ethersProvider)
 
-  console.log("this property address", propertyAddress)
 
   const { data, error } = useSWR<UnwrapFunc<typeof detectStokens>, Error>(
     SWRCachePath.detectStokens(chain, propertyAddress, accountAddress),

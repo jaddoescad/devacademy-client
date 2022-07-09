@@ -47,9 +47,14 @@ function createProviderUpdater(provider: any, setProviders: Function) {
   }
 }
 
-export const disconnectWallet = (setProvidersHandler: Function, web3Modal?: Web3Modal) => {
+export const disconnectWallet = (setProvidersHandler: Function, setMembership: Function, web3Modal?: Web3Modal) => {
   web3Modal?.clearCachedProvider()
   setProvidersHandler(undefined)
+  setMembership({
+    isFullMembership: false,
+    minDev: null,
+    totalStake: 0.00
+  })
 }
 
 export const getAccountAddress = async (web3?: Web3) => {

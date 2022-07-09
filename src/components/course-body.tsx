@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Text } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 // import {
 //   useGetPublishedCourseQuery,
@@ -16,7 +16,7 @@ import {
 import { CourseDisplay } from "src/components/course-display";
 import Navigation from "src/components/common/Navigation";
 import FullMembershipContext from "src/context/fullMembershipContext";
-import { useProvider } from "src/fixtures/wallet/hooks";
+import { useConnectWallet, useProvider } from "src/fixtures/wallet/hooks";
 import WalletContext from "src/context/walletContext";
 import {
   getPublishedArticle,
@@ -30,12 +30,13 @@ interface CourseBodyProps {
 
 export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
   const router = useRouter();
-  const { fullMembership } = useContext(FullMembershipContext);
+  const { isFullMembership } = useContext(FullMembershipContext);
   const { accountAddress, ethersProvider } = useProvider();
   const { address } = useContext(WalletContext);
   const [course, setCourse] = useState<any>(null);
   const [lessonId, setLessonId] = useState<number | null>(null);
   const [article, setArticle] = useState<any>(null);
+  const { connect, disconnect } = useConnectWallet();
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -63,9 +64,7 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
       });
     } else {
       if (lessonId) {
-        console.log(
-          "frkfr", course.courseCurriculum?.articles?.[lessonId]
-        );
+        console.log("frkfr", course.courseCurriculum?.articles?.[lessonId]);
       }
     }
 
@@ -80,7 +79,7 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
         <Box flex="1" height={"100%"}>
           {lessonId &&
           course.courseCurriculum?.articles?.[lessonId].videoEmbedUrl &&
-          fullMembership ? (
+          isFullMembership ? (
             <Box
               position={"relative"}
               pb={"56.25%"}
@@ -112,28 +111,54 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
             </Box>
           ) : lessonId &&
             course.courseCurriculum?.articles?.[lessonId].isArticle &&
-            fullMembership ? (
+            isFullMembership ? (
             <Box ml={5} width="90%" height={"90%"}>
               <CourseDisplay textContent={article} />
             </Box>
           ) : !address ? (
-            <Box
+            <Center
               color="white"
               width="100%"
               height={"70vh"}
               backgroundColor={"black"}
+              fontSize="large"
+              fontWeight="bold"
+              flexDir={"column"}
             >
-              Please Connect to Wallet
-            </Box>
+              <Text>Please connect to wallet</Text>
+              <Button
+                mt="3"
+                onClick={connect}
+                colorScheme={"teal"}
+                color="white"
+              >
+                Connect
+              </Button>
+            </Center>
           ) : (
-            <Box
+            <Center
               color="white"
               width="100%"
               height={"70vh"}
               backgroundColor={"black"}
+              fontSize="large"
+              fontWeight="bold"
+              flexDir={"column"}
             >
-              Please get Stoken membership to access this course
-            </Box>
+              <Text>Please get a membership to access this course</Text>
+              <Button
+                mt="3"
+                onClick={() =>
+                  router.push(
+                    "https://stakes.social/arbitrum-one/0xF83ffb295dbb01f97f908eE0C617DB85A3f02310"
+                  )
+                }
+                colorScheme={"green"}
+                color="white"
+              >
+                Get Access
+              </Button>
+            </Center>
           )}
         </Box>
         <Box
@@ -142,7 +167,7 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
           height="100%"
           width={"400px"}
         >
-          <Box  p="15px" fontWeight={"bold"} fontSize={"large"}>
+          <Box p="15px" fontWeight={"bold"} fontSize={"large"}>
             Course Content
           </Box>
           <Accordion defaultIndex={[0]} allowMultiple>

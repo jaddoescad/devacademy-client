@@ -19,11 +19,12 @@ import { providers } from "ethers";
 import { connectWallet } from "../fixtures/wallet/utility";
 import { theme } from "../theme";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import FullMembershipContext, { fullMembership } from "src/context/fullMembershipContext";
-import {firebase} from "src/firebase";
+import FullMembershipContext from "src/context/fullMembershipContext";
+import { firebase } from "src/firebase";
 import AuthStateContext, { authState } from "src/context/authStateContext";
-import 'src/styles.css'
-import "focus-visible/dist/focus-visible"
+import "src/styles.css";
+import "focus-visible/dist/focus-visible";
+import { getMinimumDevForMembership } from "src/services/firestore";
 
 const cache = new InMemoryCache();
 const client = new ApolloClient({
@@ -31,15 +32,16 @@ const client = new ApolloClient({
   cache,
 });
 
-
 interface AuthStateType {
-  isCurrencyDEV: any,
-  web3: any,
-  ethersProvider: any,
-  web3Modal: any,
-  address: any,
-  fullMembership: any,
-  authState: 'loading' | 'loaded'
+  isCurrencyDEV: any;
+  web3: any;
+  ethersProvider: any;
+  web3Modal: any;
+  address: any;
+  isFullMembership: boolean;
+  minDev: number | undefined;
+  authState: "loading" | "loaded";
+  totalStake: number
 }
 
 class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
@@ -49,8 +51,10 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
     ethersProvider: undefined,
     web3Modal: undefined,
     address: undefined,
-    fullMembership: false,
-    authState: 'loading',
+    isFullMembership: false,
+    minDev: undefined,
+    totalStake: 0,
+    authState: "loading",
   };
 
   getProviderOptions = () => {
@@ -125,16 +129,9 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
   };
 
   componentDidMount = () => {
-
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        this.setState({authState: 'loaded'});
-        // User is signed in.
-      } else {
-        // No user is signed in.
-        this.setState({authState: 'loaded'});
-      }
-      });
+    firebase.auth().onAuthStateChanged(function (user) {
+        this.setState({ authState: "loaded" });
+    });
 
     this.web3Modal = new Web3Modal({
       cacheProvider: true,
@@ -151,6 +148,11 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
       const { currency } = JSON.parse(settings);
       this.setState({ isCurrencyDEV: currency === "DEV" });
     }
+    getMinimumDevForMembership().then((snapshot) => {
+      this.setState({
+        minDev: snapshot.data()?.minDev
+      })
+    })
   };
 
   setProviders = (
@@ -169,44 +171,55 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
     this.setState({ isCurrencyDEV: !this.state.isCurrencyDEV });
   };
 
-  updateFullMembership = (status) => {
-    this.setState({ fullMembership: status })
-  }
+  setMembership = (membership) => {
+    this.setState({
+      isFullMembership: membership?.isFullMembership,
+      minDev: membership?.minDev || this.state.minDev,
+      totalStake: membership?.totalStake || 0
+    });
+  };
 
   render() {
     const { Component, pageProps, apollo } = this.props;
 
     return (
-      <AuthStateContext.Provider value={{
-        authState: this.state.authState,
-      }}>
-      <FullMembershipContext.Provider
-        value={{fullMembership: this.state.fullMembership, setFullMembership: this.updateFullMembership}}
+      <AuthStateContext.Provider
+        value={{
+          authState: this.state.authState,
+        }}
       >
-      <ApolloProvider client={client}>
-      <ChakraProvider theme={theme}>
-        <WalletContext.Provider
+        <FullMembershipContext.Provider
           value={{
-            web3: this.state.web3,
-            ethersProvider: this.state.ethersProvider,
-            setProviders: this.setProviders,
-            web3Modal: this.state.web3Modal,
-            address: this.state.address,
+            isFullMembership: this.state.isFullMembership,
+            minDev: this.state.minDev,
+            totalStake: this.state.totalStake,
+            setMembership: this.setMembership,
           }}
         >
-          <Head>
-            <title>Dev Academy</title>
-            <meta
-              name="viewport"
-              content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
-            />
-          </Head>
-          {  <Component {...pageProps}/> }
-        </WalletContext.Provider>
-      </ChakraProvider>
-      </ApolloProvider>
-      </FullMembershipContext.Provider>
-    </AuthStateContext.Provider>
+          <ApolloProvider client={client}>
+            <ChakraProvider theme={theme}>
+              <WalletContext.Provider
+                value={{
+                  web3: this.state.web3,
+                  ethersProvider: this.state.ethersProvider,
+                  setProviders: this.setProviders,
+                  web3Modal: this.state.web3Modal,
+                  address: this.state.address,
+                }}
+              >
+                <Head>
+                  <title>Dev Academy</title>
+                  <meta
+                    name="viewport"
+                    content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
+                  />
+                </Head>
+                {<Component {...pageProps} />}
+              </WalletContext.Provider>
+            </ChakraProvider>
+          </ApolloProvider>
+        </FullMembershipContext.Provider>
+      </AuthStateContext.Provider>
     );
   }
 }

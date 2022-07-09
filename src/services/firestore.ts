@@ -307,6 +307,11 @@ export const getMinimumDevForMembership = async () => {
   return getDoc(minDevRef);
 }
 
+export const getPropertyAddress = async () => {
+  const minDevRef = doc(db, "config", "property");
+  return getDoc(minDevRef);
+}
+
 
 export const getPublishedCourse = async (id) => {
   const docRef = doc(db, "publishedCourses", id);

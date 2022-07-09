@@ -55,7 +55,10 @@ import {
   Img,
 } from "@chakra-ui/react";
 import StokenValueContext from "src/context/fullMembershipContext";
-import { getMinimumDevForMembership } from "src/services/firestore";
+import {
+  getMinimumDevForMembership,
+  getPropertyAddress,
+} from "src/services/firestore";
 
 const Grid = styled.div`
   display: grid;
@@ -144,6 +147,7 @@ const createSwitchNetwork =
   };
 
 export default function Navigation({ isNotMaxW, courseTitle }) {
+  const propertyAddress = process.env.NEXT_PUBLIC_PROPERTY_ADDRESS;
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const { connect, disconnect } = useConnectWallet();
@@ -152,15 +156,16 @@ export default function Navigation({ isNotMaxW, courseTitle }) {
   const { address } = useContext(WalletContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { name } = useDetectChain(ethersProvider);
-  const propertyAddress = "0xfb049b86Da8D2F4e335eF2281537f5dddbE77393";
-  const { fullMembership, setFullMembership } = useContext(StokenValueContext);
+  const { isFullMembership, setMembership } = useContext(StokenValueContext);
 
   const { name: network } = useDetectChain(ethersProvider);
   const isDeny = isDenyProperty(network, propertyAddress);
   const { sTokens } = useDetectSTokens(propertyAddress, accountAddress);
 
   React.useEffect(() => {
-    setFullMembership(true);
+    setMembership({
+      isFullMembership: false,
+    });
     if (!isDeny) {
       if (accountAddress && sTokens) {
         sTokens.forEach((sToken) => {
@@ -169,12 +174,26 @@ export default function Navigation({ isNotMaxW, courseTitle }) {
               const totalStake = parseFloat(
                 toNaturalNumber(positionStoken?.amount).toFixed()
               );
-
               if (totalStake > minDev.data()?.minDev) {
-                setFullMembership(true);
+                setMembership({
+                  isFullMembership: true,
+                  minDev: minDev.data()?.minDev,
+                  totalStake: totalStake,
+                });
+              } else {
+                setMembership({
+                  isFullMembership: false,
+                  minDev: minDev.data()?.minDev,
+                  totalStake: totalStake,
+                });
               }
             });
           });
+        });
+      } else {
+        setMembership({
+          isFullMembership: false,
+          totalStake: 0,
         });
       }
     }
@@ -263,7 +282,7 @@ export default function Navigation({ isNotMaxW, courseTitle }) {
                   size={"sm"}
                   mr={4}
                 >
-                  Get Access
+                  {isFullMembership ? "Membership" : "Get Access"}
                 </Button>
               </Flex>
             </Flex>
