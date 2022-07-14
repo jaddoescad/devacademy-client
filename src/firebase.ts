@@ -21,7 +21,7 @@ const db = getFirestore(app);
 const firStorage = getStorage(app);
 
 // Configure FirebaseUI.
-const uiConfig = {
+const uiConfig: any = {
   // Popup signin flow rather than redirect flow.
   signInFlow: "popup",
   // We will display Google and Facebook as auth providers.
