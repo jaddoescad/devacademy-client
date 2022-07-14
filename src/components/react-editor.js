@@ -100,7 +100,7 @@ const CreateReactEditor = (props) => {
 
   return (
       <ForwardRefEditor
-        style={{ height: "100%", width: "100%" }}
+        style={{ height: "90vh", width: "100%" }}
         value={props.value}
         ref={editorRef}
         renderHTML={(text) => (
