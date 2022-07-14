@@ -72,7 +72,7 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
   }, [lessonId]);
 
   return (
-    <Flex flexDir={"column"} align="center" width={"100%"} height="100vh">
+    <Flex flexDir={"column"} align="center" width={"100%"} height="100%" pb="50px">
       <Navigation isNotMaxW={true} courseTitle={course?.title} />
 
       <Flex flex={1} width="100%">
@@ -112,7 +112,7 @@ export const CourseBody: React.FC<CourseBodyProps> = ({ courseId }) => {
           ) : lessonId &&
             course.courseCurriculum?.articles?.[lessonId].isArticle &&
             isFullMembership ? (
-            <Box ml={5} width="90%" height={"90%"}>
+            <Box ml={5} width="90%" height={"100%"}>
               <CourseDisplay textContent={article} />
             </Box>
           ) : !address ? (
