@@ -38,26 +38,23 @@ interface AuthStateType {
   ethersProvider: any;
   web3Modal: any;
   address: any;
-  isFullMembership: boolean;
+  isFullMembership: boolean | null;
   minDev: number | undefined;
   authState: "loading" | "loaded";
-  totalStake: number
+  totalStake: number;
 }
+const NextApp: React.FC<AppInitialProps & WithApolloProps<{}>> = ({ Component, pageProps }) => {
+  const [isCurrencyDEV, setIsCurrencyDEV] = React.useState<any>(true);
+  const [web3, setWeb3] = React.useState<any>(undefined);
+  const [ethersProvider, setEthersProvider] = React.useState<any>(undefined);
+  const [address, setAddress] = React.useState<any>(undefined);
+  const [isFullMembership, setIsFullMembership] = React.useState<any>(null);
+  const [minDev, setMinDev] = React.useState<any>(undefined);
+  const [totalStake, setTotalStake] = React.useState<any>(0);
+  const [authState, setAuthState] = React.useState<any>("loading");
+  const [web3Modal, setWeb3Modal] = React.useState<any>(null);
 
-class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
-  state: AuthStateType = {
-    isCurrencyDEV: true,
-    web3: undefined,
-    ethersProvider: undefined,
-    web3Modal: undefined,
-    address: undefined,
-    isFullMembership: false,
-    minDev: undefined,
-    totalStake: 0,
-    authState: "loading",
-  };
-
-  getProviderOptions = () => {
+  const getProviderOptions = () => {
     const walletLink = new WalletLink({
       appName: "name",
       appLogoUrl:
@@ -104,124 +101,120 @@ class NextApp extends App<AppInitialProps & WithApolloProps<{}>> {
     };
   };
 
-  web3Modal: any;
-
-  onWalletConnect = async () => {
+  const onWalletConnect = async () => {
     const web3ForInjected: any = await detectEthereumProvider();
     if (!web3ForInjected) {
       // NOTE: If the localStorage cache and metamask extension do not exist,
       //       processing conflicts and will not be able to login, so clear the cache here.
-      this.web3Modal.clearCachedProvider();
+      web3Modal.clearCachedProvider();
       return;
     }
     const isAuthorized = await getAccountAddress(new Web3(web3ForInjected));
     if (!isAuthorized) {
       return;
     }
-    const provider = await this.web3Modal.connect().catch(() => {
+    const provider = await web3Modal.connect().catch(() => {
       return undefined;
     });
     if (provider === undefined) {
       return undefined;
     }
 
-    connectWallet(this.setProviders, this.web3Modal);
+    connectWallet(setProviders, web3Modal);
   };
 
-  componentDidMount = () => {
+  React.useEffect(() => {
     firebase.auth().onAuthStateChanged(function (user) {
-        this.setState({ authState: "loaded" });
+      setAuthState("loaded")
     });
 
-    this.web3Modal = new Web3Modal({
+    const web3Modal_ = new Web3Modal({
       cacheProvider: true,
-      providerOptions: this.getProviderOptions(),
+      providerOptions: getProviderOptions(),
     });
-    this.setState({ web3Modal: this.web3Modal });
 
-    if (this.web3Modal.cachedProvider === "injected") {
-      this.onWalletConnect();
+    setWeb3Modal(web3Modal_)
+
+
+    if (web3Modal?.cachedProvider === "injected") {
+      onWalletConnect();
     }
 
     const settings = localStorage.getItem("settings");
     if (settings) {
       const { currency } = JSON.parse(settings);
-      this.setState({ isCurrencyDEV: currency === "DEV" });
+      setIsCurrencyDEV(currency === "DEV");
     }
     getMinimumDevForMembership().then((snapshot) => {
-      this.setState({
-        minDev: snapshot.data()?.minDev
-      })
-    })
-  };
+      setMinDev(snapshot.data()?.minDev);
+    });
+  }, []);
 
-  setProviders = (
+  const setProviders = (
     web3: Web3,
     ethersProvider: providers.BaseProvider,
     address: String
   ) => {
-    this.setState({ web3, ethersProvider, address });
+    setWeb3(web3);
+    setEthersProvider(ethersProvider);
+    setAddress(address);
   };
 
-  toggleCurrency = () => {
+  const toggleCurrency = () => {
     localStorage.setItem(
       "settings",
-      JSON.stringify({ currency: !this.state.isCurrencyDEV ? "DEV" : "USD" })
+      JSON.stringify({ currency: !isCurrencyDEV ? "DEV" : "USD" })
     );
-    this.setState({ isCurrencyDEV: !this.state.isCurrencyDEV });
+    setIsCurrencyDEV(!isCurrencyDEV);
   };
 
-  setMembership = (membership) => {
-    this.setState({
-      isFullMembership: membership?.isFullMembership,
-      minDev: membership?.minDev || this.state.minDev,
-      totalStake: membership?.totalStake || 0
-    });
+  const setMembership = (membership) => {
+    setIsFullMembership(membership?.isFullMembership);
+    setMinDev(membership?.minDev || minDev);
+    setTotalStake(membership?.totalStake || 0);
   };
 
-  render() {
-    const { Component, pageProps, apollo } = this.props;
+  // const { Component, pageProps, apollo } = this.props;
 
-    return (
-      <AuthStateContext.Provider
+  return (
+    <AuthStateContext.Provider
+      value={{
+        authState: authState,
+      }}
+    >
+      <FullMembershipContext.Provider
         value={{
-          authState: this.state.authState,
+          isFullMembership: isFullMembership,
+          minDev: minDev,
+          totalStake: totalStake,
+          setMembership: setMembership,
         }}
       >
-        <FullMembershipContext.Provider
-          value={{
-            isFullMembership: this.state.isFullMembership,
-            minDev: this.state.minDev,
-            totalStake: this.state.totalStake,
-            setMembership: this.setMembership,
-          }}
-        >
-          <ApolloProvider client={client}>
-            <ChakraProvider theme={theme}>
-              <WalletContext.Provider
-                value={{
-                  web3: this.state.web3,
-                  ethersProvider: this.state.ethersProvider,
-                  setProviders: this.setProviders,
-                  web3Modal: this.state.web3Modal,
-                  address: this.state.address,
-                }}
-              >
-                <Head>
-                  <title>Dev Academy</title>
-                  <meta
-                    name="viewport"
-                    content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
-                  />
-                </Head>
-                {<Component {...pageProps} />}
-              </WalletContext.Provider>
-            </ChakraProvider>
-          </ApolloProvider>
-        </FullMembershipContext.Provider>
-      </AuthStateContext.Provider>
-    );
-  }
-}
+        <ApolloProvider client={client}>
+          <ChakraProvider theme={theme}>
+            <WalletContext.Provider
+              value={{
+                web3: web3,
+                ethersProvider: ethersProvider,
+                setProviders: setProviders,
+                web3Modal: web3Modal,
+                address: address,
+              }}
+            >
+              <Head>
+                <title>Dev Academy</title>
+                <meta
+                  name="viewport"
+                  content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
+                />
+              </Head>
+              {<Component {...pageProps} />}
+            </WalletContext.Provider>
+          </ChakraProvider>
+        </ApolloProvider>
+      </FullMembershipContext.Provider>
+    </AuthStateContext.Provider>
+  );
+};
 
 export default NextApp;

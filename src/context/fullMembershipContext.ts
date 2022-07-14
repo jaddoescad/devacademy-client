@@ -1,14 +1,14 @@
 import { createContext } from 'react'
 
 interface Membership {
-  isFullMembership?: boolean
+  isFullMembership?: boolean | null
   minDev?: number 
   totalStake: number
   setMembership: Function
 }
 
 export const fullMembership: Membership = {
-  isFullMembership: false,
+  isFullMembership: null,
   minDev: undefined,
   totalStake: 0, 
   setMembership: () => {}
