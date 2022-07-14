@@ -31,7 +31,7 @@ const Post = () => {
 
 
   useEffect(() => {
-    if (firebase.auth().currentUser?.uid && !coursesSet) {
+    if (!coursesSet) {
       getPublishedCourses(firebase.auth().currentUser?.uid).then(
         (querySnapshot) => {
           let courses_: DocumentData[] = [];
@@ -81,7 +81,6 @@ const Post = () => {
               Discover Awesome Courses
             </Text>
           </Box>
-
           {courses.map((course) => (
             <Box
               width={"300px"}

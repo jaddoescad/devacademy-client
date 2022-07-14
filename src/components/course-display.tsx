@@ -52,7 +52,7 @@ export const CourseDisplay: React.FC<CourseDisplayProps> = ({
     },
   };
   return (
-    <div className="custom-html-style" style={{}}>
+    <div className="custom-html-style" style={{overflow: "scroll", height: "100%", width: "100%", paddingRight: "30px", paddingBottom: "100px"}}>
       <ReactMarkdown
         components={components}
         rehypePlugins={[rehypeKatex]}
