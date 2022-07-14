@@ -1,6 +1,5 @@
 import { Box } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import Navigation from "src/components/common/Navigation";
 import { useRouter } from "next/router";
 import { CourseBody } from "src/components/course-body";
 import { withApollo } from "src/utils/withApollo";

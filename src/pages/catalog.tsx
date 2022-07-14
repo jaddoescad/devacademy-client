@@ -13,7 +13,7 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
-import Navigation from "src/components/common/Navigation";
+import {Navigation} from "src/components/common/Navigation";
 // import { usePaginatedCoursesQuery } from "src/generated/graphql";
 import { withApollo } from "../utils/withApollo";
 import NextLink from "next/link";

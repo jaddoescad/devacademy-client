@@ -39,7 +39,9 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({}) => {
     if (router.isReady) {
       getArticle(router.query.courseid, router.query.lessonid).then(
         (snapshot) => {
-          setValue(snapshot.data()?.[router.query.lessonid]?.["articleText"]);
+          setValue(
+            snapshot.data()?.[router.query.lessonid as string]?.["articleText"]
+          );
         }
       );
     }
@@ -73,7 +75,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({}) => {
 
   return (
     <div>
-      <InstructorNavigation editorChange={editorChange}/>
+      <InstructorNavigation editorChange={editorChange} />
       <div
         style={{
           paddingLeft: 0,

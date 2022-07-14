@@ -146,7 +146,13 @@ const createSwitchNetwork =
     const res = await switchChain(chainName, provider);
   };
 
-export default function Navigation({ isNotMaxW, courseTitle }) {
+  interface NavigationProps {
+    isNotMaxW?: boolean;
+    courseTitle?: string;
+  }
+  
+    
+export const Navigation: React.FC<NavigationProps> = ({ isNotMaxW, courseTitle }) => {
   const propertyAddress = process.env.NEXT_PUBLIC_PROPERTY_ADDRESS;
   const router = useRouter();
   const [open, setOpen] = useState(false);

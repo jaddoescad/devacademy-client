@@ -4,15 +4,12 @@ import "react-markdown-editor-lite/lib/index.css";
 import hljs from "highlight.js";
 import ReactMarkdown from "react-markdown";
 import "react-markdown-editor-lite/lib/index.css";
-import {
-  atomOneLight,
-} from "react-syntax-highlighter/dist/cjs/styles/hljs";
+import { atomOneLight } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import PropTypes from "prop-types";
 import SyntaxHighlighter from "react-syntax-highlighter";
-
 
 import gfm from "remark-gfm";
 import { InstructorNavigation } from "./common/InstructorNavigation";
@@ -43,9 +40,10 @@ export const CourseDisplay: React.FC<CourseDisplayProps> = ({
           style={atomOneLight}
           language={match[1]}
           PreTag="div"
-          children={String(children).replace(/\n$/, "")}
           {...props}
-        />
+        >
+          {String(children).replace(/\n$/, "")}
+        </SyntaxHighlighter>
       ) : (
         <code className={className} {...props}>
           {String(children).replace(/\n$/, "")}
@@ -54,13 +52,14 @@ export const CourseDisplay: React.FC<CourseDisplayProps> = ({
     },
   };
   return (
-    <div className="custom-html-style" style={{ }}>
+    <div className="custom-html-style" style={{}}>
       <ReactMarkdown
         components={components}
         rehypePlugins={[rehypeKatex]}
         remarkPlugins={[gfm, remarkMath]}
-        children={value}
-      />
+      >
+        {value}
+      </ReactMarkdown>
     </div>
   );
 };

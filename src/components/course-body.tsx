@@ -14,7 +14,7 @@ import {
   AccordionIcon,
 } from "@chakra-ui/react";
 import { CourseDisplay } from "src/components/course-display";
-import Navigation from "src/components/common/Navigation";
+import {Navigation} from "src/components/common/Navigation";
 import FullMembershipContext from "src/context/fullMembershipContext";
 import { useConnectWallet, useProvider } from "src/fixtures/wallet/hooks";
 import WalletContext from "src/context/walletContext";

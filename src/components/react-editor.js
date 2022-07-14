@@ -24,6 +24,8 @@ const ForwardRefEditor = forwardRef((props, ref) => (
   <Editor {...props} editorRef={ref} />
 ));
 
+ForwardRefEditor.displayName = "Editor"
+
 const CreateReactEditor = (props) => {
   const editorRef = useRef(null);
   const router = useRouter();
@@ -86,9 +88,8 @@ const CreateReactEditor = (props) => {
           style={atomOneLight}
           language={match[1]}
           PreTag="div"
-          children={String(children).replace(/\n$/, "")}
           {...props}
-        />
+        >{String(children).replace(/\n$/, "")}</SyntaxHighlighter>
       ) : (
         <code className={className} {...props}>
           {String(children).replace(/\n$/, "")}
@@ -107,8 +108,9 @@ const CreateReactEditor = (props) => {
             components={components}
             rehypePlugins={[rehypeKatex]}
             remarkPlugins={[gfm, remarkMath]}
-            children={text}
-          />
+          >
+          text
+          </ReactMarkdown>
         )}
         placeholder="Start typing here..."
         onImageUpload={onImageUpload}

@@ -1,5 +1,3 @@
-import {firApp} from 'src/firebase';
-
 // /config/firebaseAuthUI.config.js
 export const uiConfig = (firApp) => {
     return {

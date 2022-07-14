@@ -13,10 +13,10 @@ const Thumb: React.FC<InputFieldProps> = ({ label, promoImage, ...props }) => {
   const [field, { error }] = useField(props);
 
   const [loading, setLoading] = React.useState(false);
-  const [thumb, setThumb] = React.useState(null);
-  const [file, setFile] = React.useState(null);
+  const [thumb, setThumb] = React.useState<any>(null);
+  // const [file, setFile] = React.useState(null);
   const formikProps = useFormikContext();
-  const inputRef = useRef(null);
+  const inputRef = useRef<any>(null);
 
   if (loading) {
     return <p>loading...</p>;
@@ -51,7 +51,7 @@ const Thumb: React.FC<InputFieldProps> = ({ label, promoImage, ...props }) => {
           {...props}
           //   id={field.name}
 
-          onChange={(event) => {
+          onChange={(event: any) => {
             const reader = new FileReader();
             setLoading(true);
 
@@ -61,7 +61,7 @@ const Thumb: React.FC<InputFieldProps> = ({ label, promoImage, ...props }) => {
               console.log("reader result", reader.result);
             };
 
-            file = event.currentTarget.files[0];
+            const file = event.currentTarget.files[0];
             reader.readAsDataURL(file);
             formikProps.setFieldValue("file", event.currentTarget.files[0]);
           }}

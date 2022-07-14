@@ -5,7 +5,6 @@ import React, { useEffect } from "react";
 import { InstructorNavigation } from "src/components/common/InstructorNavigation";
 import { InputField } from "src/components/InputField";
 import { Wrapper } from "src/components/Wrapper";
-import { useIsAuth } from "src/utils/useIsAuth";
 import { withApollo } from "../utils/withApollo";
 import { createCourse } from "src/services/firestore";
 import {firebase} from "src/firebase";

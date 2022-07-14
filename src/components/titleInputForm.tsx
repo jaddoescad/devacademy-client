@@ -46,6 +46,8 @@ const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
   }
 );
 
+TextInput.displayName = "Text Input"
+
 // 2. Create the form
 const Form = ({
   firstFieldRef,
