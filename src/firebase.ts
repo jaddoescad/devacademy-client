@@ -5,6 +5,7 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { createUser } from "src/services/firestore";
 import Router, { withRouter } from 'next/router'
+import { getAnalytics } from "firebase/analytics";
 
 // Configure Firebase.
 const config = {
@@ -19,7 +20,10 @@ const config = {
 const app = firebase.initializeApp(config);
 const db = getFirestore(app);
 const firStorage = getStorage(app);
-
+let analytics;
+if (app.name && typeof window !== 'undefined') {
+  analytics = getAnalytics(app);
+}
 // Configure FirebaseUI.
 const uiConfig: any = {
   // Popup signin flow rather than redirect flow.
