@@ -34,7 +34,7 @@ export const SubscriptionAlert: React.FC<SubscriptionAlertProps> = ({}) => {
 
   return (
     <Alert
-      status={isFullMembership && accountAddress ? "success" : "error"}
+      status={isFullMembership && accountAddress && network === "arbitrum-one" ? "success" : "error"}
       variant="subtle"
       flexDirection="column"
       alignItems="center"
@@ -64,18 +64,18 @@ export const SubscriptionAlert: React.FC<SubscriptionAlertProps> = ({}) => {
         ) : (
           <>
             <Text>Please connect wallet on Arbitrum network</Text>{" "}
-            <Button mt="3" onClick={connect} colorScheme={"teal"} color="white">
+            {!accountAddress && <Button mt="3" onClick={connect} colorScheme={"teal"} color="white">
               Connect
-            </Button>
+            </Button>}
           </>
         )}
       </AlertTitle>
       <AlertDescription fontWeight={"medium"} maxWidth="sm">
-        {isFullMembership && accountAddress ? (
+        {isFullMembership && accountAddress && network === "arbitrum-one" ? (
           "Enjoy unlimited access to all our courses"
         ) : (
           <Box>
-            {accountAddress && (
+            {accountAddress && network === "arbitrum-one" && (
               <>
                 <Text>You do not have access to courses.</Text>
                 <Button

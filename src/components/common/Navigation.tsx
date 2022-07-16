@@ -166,44 +166,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isNotMaxW, courseTitle }
 
   const { name: network } = useDetectChain(ethersProvider);
   const isDeny = isDenyProperty(network, propertyAddress);
-  const { sTokens } = useDetectSTokens(propertyAddress, accountAddress);
-
-  React.useEffect(() => {
-    setMembership({
-      isFullMembership: false,
-    });
-    if (!isDeny) {
-      if (accountAddress && sTokens) {
-        sTokens.forEach((sToken) => {
-          getStokenPositions(ethersProvider!, sToken).then((positionStoken) => {
-            getMinimumDevForMembership().then((minDev) => {
-              const totalStake = parseFloat(
-                toNaturalNumber(positionStoken?.amount).toFixed()
-              );
-              if (totalStake > minDev.data()?.minDev) {
-                setMembership({
-                  isFullMembership: true,
-                  minDev: minDev.data()?.minDev,
-                  totalStake: totalStake,
-                });
-              } else {
-                setMembership({
-                  isFullMembership: false,
-                  minDev: minDev.data()?.minDev,
-                  totalStake: totalStake,
-                });
-              }
-            });
-          });
-        });
-      } else {
-        setMembership({
-          isFullMembership: false,
-          totalStake: 0,
-        });
-      }
-    }
-  }, [isDeny, accountAddress, sTokens]);
+  const { sTokens, sTokensByPropertyAddress} = useDetectSTokens(propertyAddress, accountAddress);
 
   return (
     <>

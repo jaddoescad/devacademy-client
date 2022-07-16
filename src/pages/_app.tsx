@@ -25,6 +25,8 @@ import AuthStateContext, { authState } from "src/context/authStateContext";
 import "src/styles.css";
 import "focus-visible/dist/focus-visible";
 import { getMinimumDevForMembership } from "src/services/firestore";
+import { detectStokens, getStokenPositions } from "src/fixtures/dev-kit/client";
+import { toNaturalNumber } from "src/utility";
 
 const cache = new InMemoryCache();
 const client = new ApolloClient({
@@ -43,7 +45,10 @@ interface AuthStateType {
   authState: "loading" | "loaded";
   totalStake: number;
 }
-const NextApp: React.FC<AppInitialProps & WithApolloProps<{}>> = ({ Component, pageProps }) => {
+const NextApp: React.FC<AppInitialProps & WithApolloProps<{}>> = ({
+  Component,
+  pageProps,
+}) => {
   const [isCurrencyDEV, setIsCurrencyDEV] = React.useState<any>(true);
   const [web3, setWeb3] = React.useState<any>(undefined);
   const [ethersProvider, setEthersProvider] = React.useState<any>(undefined);
@@ -53,6 +58,7 @@ const NextApp: React.FC<AppInitialProps & WithApolloProps<{}>> = ({ Component, p
   const [totalStake, setTotalStake] = React.useState<any>(0);
   const [authState, setAuthState] = React.useState<any>("loading");
   const [web3Modal, setWeb3Modal] = React.useState<any>(null);
+  const propertyAddress = process.env.NEXT_PUBLIC_PROPERTY_ADDRESS;
 
   const getProviderOptions = () => {
     const walletLink = new WalletLink({
@@ -125,7 +131,7 @@ const NextApp: React.FC<AppInitialProps & WithApolloProps<{}>> = ({ Component, p
 
   React.useEffect(() => {
     firebase.auth().onAuthStateChanged(function (user) {
-      setAuthState("loaded")
+      setAuthState("loaded");
     });
 
     const web3Modal_ = new Web3Modal({
@@ -133,12 +139,7 @@ const NextApp: React.FC<AppInitialProps & WithApolloProps<{}>> = ({ Component, p
       providerOptions: getProviderOptions(),
     });
 
-    setWeb3Modal(web3Modal_)
-
-
-    if (web3Modal?.cachedProvider === "injected") {
-      onWalletConnect();
-    }
+    setWeb3Modal(web3Modal_);
 
     const settings = localStorage.getItem("settings");
     if (settings) {
@@ -149,6 +150,43 @@ const NextApp: React.FC<AppInitialProps & WithApolloProps<{}>> = ({ Component, p
       setMinDev(snapshot.data()?.minDev);
     });
   }, []);
+
+  React.useEffect(() => {
+    if (web3Modal?.cachedProvider === "injected") {
+      onWalletConnect();
+    }
+  }, [web3Modal]);
+
+  React.useEffect(() => {
+    var totalStakeAmount = 0;
+    if (address && ethersProvider) {
+      getMinimumDevForMembership().then((minDev) => {
+        detectStokens(ethersProvider, propertyAddress, address).then(
+          (stokens) => {
+            stokens?.forEach(( stoken, i) => {
+              getStokenPositions(ethersProvider!, stoken).then(
+                (positionStoken) => {
+                  const stokenStake = parseFloat(
+                    toNaturalNumber(positionStoken?.amount).toFixed()
+                  );
+                  totalStakeAmount = totalStakeAmount + stokenStake;
+                  if (stokens.length === i + 1) {
+                    setTotalStake(totalStakeAmount);
+                  }
+                }
+              );
+            });
+            setMinDev(minDev.data()?.minDev);
+            if (totalStakeAmount > minDev.data()?.minDev) {
+              setIsFullMembership(true);
+            } else {
+              setIsFullMembership(true);
+            }
+          }
+        );
+      });
+    }
+  }, [address, ethersProvider, web3Modal]);
 
   const setProviders = (
     web3: Web3,
