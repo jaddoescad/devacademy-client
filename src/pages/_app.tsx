@@ -1,5 +1,5 @@
 import * as React from "react";
-import App, { AppInitialProps } from "next/app";
+import App, { AppInitialProps, AppProps } from "next/app";
 import Head from "next/head";
 import WalletContext from "../context/walletContext";
 import Web3 from "web3";
@@ -45,7 +45,7 @@ interface AuthStateType {
   authState: "loading" | "loaded";
   totalStake: number;
 }
-const NextApp: React.FC<AppInitialProps & WithApolloProps<{}>> = ({
+const NextApp: React.FC<AppInitialProps & AppProps & WithApolloProps<{}>> = ({
   Component,
   pageProps,
 }) => {
